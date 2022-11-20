@@ -20,6 +20,6 @@ public class Client {
     private String phoneNumber;
     @Column
     private String email;
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private Set<BoxOrder> boxOrders;
 }
