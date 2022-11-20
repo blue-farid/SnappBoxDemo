@@ -17,11 +17,8 @@ public class BoxOrderController {
     private final BoxOrderService service;
     private final String saveSuccess;
     private final String updateSuccess;
-
     private final String removeSuccess;
-
     private final String notFound;
-
     private final String duplicate;
 
     public BoxOrderController(BoxOrderService service, @Value("${save.success}") String saveSuccess,
