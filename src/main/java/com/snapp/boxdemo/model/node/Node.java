@@ -18,7 +18,7 @@ public abstract class Node {
     private String fullName;
     @Column
     private String phoneNumber;
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private Address address;
     @Column
     private String comment;
