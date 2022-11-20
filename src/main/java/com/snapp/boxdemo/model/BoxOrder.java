@@ -14,7 +14,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-public class Order {
+public class BoxOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -24,7 +24,7 @@ public class Order {
     @OneToOne
     @JoinColumn(name = "node_id")
     private SourceNode source;
-    @OneToMany(mappedBy = "order")
+    @OneToMany(mappedBy = "boxOrder")
     private List<DestinationNode> destinations;
     @Column
     @Enumerated(EnumType.STRING)

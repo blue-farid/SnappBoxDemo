@@ -21,5 +21,5 @@ public class Client {
     @Column
     private String email;
     @OneToMany(mappedBy = "owner")
-    private Set<Order> orders;
+    private Set<BoxOrder> boxOrders;
 }

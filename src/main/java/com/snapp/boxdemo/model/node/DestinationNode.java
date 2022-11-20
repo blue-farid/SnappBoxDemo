@@ -1,6 +1,6 @@
 package com.snapp.boxdemo.model.node;
 
-import com.snapp.boxdemo.model.Order;
+import com.snapp.boxdemo.model.BoxOrder;
 import com.snapp.boxdemo.model.PriceRange;
 
 import javax.persistence.*;
@@ -11,6 +11,6 @@ public class DestinationNode extends Node {
     @Enumerated(EnumType.STRING)
     private PriceRange priceRange;
     @ManyToOne
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "box_order_id")
+    private BoxOrder boxOrder;
 }
