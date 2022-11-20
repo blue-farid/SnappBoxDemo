@@ -10,6 +10,7 @@ import java.io.Serializable;
  */
 @Data
 public class DestinationNodeDto implements Serializable {
+    private final Long id;
     private final String fullName;
     private final String phoneNumber;
     private final String addressBase;

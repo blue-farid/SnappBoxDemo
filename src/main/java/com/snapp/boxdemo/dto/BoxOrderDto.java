@@ -12,6 +12,7 @@ import java.util.List;
  */
 @Data
 public class BoxOrderDto implements Serializable {
+    private final Long id;
     private final String ownerFullName;
     private final String ownerPhoneNumber;
     private final String sourceFullName;

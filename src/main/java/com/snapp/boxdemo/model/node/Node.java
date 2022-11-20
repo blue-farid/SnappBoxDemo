@@ -7,7 +7,6 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @MappedSuperclass
-@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @Getter
 @Setter
 public abstract class Node {
