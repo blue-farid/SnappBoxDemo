@@ -26,7 +26,7 @@ public class BoxOrderController {
     }
 
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<BoxOrderDto> deleteBoxOrder(@PathVariable Long orderId) {
+    public ResponseEntity<String> deleteBoxOrder(@PathVariable Long orderId) {
         return null;
     }
 }
