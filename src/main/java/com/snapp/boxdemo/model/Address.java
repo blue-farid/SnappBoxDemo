@@ -16,7 +16,7 @@ public class Address {
     @Column
     private String base;
     @Column
-    private Integer houseNumber;
+    private String houseNumber;
     @Column
-    private Integer homeUnit;
+    private String homeUnit;
 }
