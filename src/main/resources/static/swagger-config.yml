@@ -39,15 +39,15 @@ paths:
                   sourceAddressHouseNumber: "4"
                   sourceAddressHomeUnit: "3"
                   sourceComment: "Sample description for the order"
-                  destinations: [destination_1:
-                    fullName: "Neda Masjedi"
-                    phoneNumber: "09123456788"
-                    addressBase: "Tehran, Sattarkhan"
-                    addressHouseNumber: "10"
-                    addressHomeUnit: "3"
-                    comment: "some comment for this destination"
-                    priceRange: "UP_TO_ONE"
-                  ]
+                  destinations:
+                    destination_1:
+                      fullName: "Neda Masjedi"
+                      phoneNumber: "09123456788"
+                      addressBase: "Tehran, Sattarkhan"
+                      addressHouseNumber: "10"
+                      addressHomeUnit: "3"
+                      comment: "some comment for this destination"
+                      priceRange: "UP_TO_ONE"
                   orderType: "BIKE"
       responses:
         200:
@@ -79,15 +79,15 @@ paths:
                   sourceAddressHouseNumber: "4"
                   sourceAddressHomeUnit: "3"
                   sourceComment: "Sample description for the order"
-                  destinations: [ destination_1:
-                                    fullName: "Neda Masjedi"
-                                    phoneNumber: "09123456788"
-                                    addressBase: "Tehran, Sattarkhan"
-                                    addressHouseNumber: "10"
-                                    addressHomeUnit: "3"
-                                    comment: "some comment for this destination"
-                                    priceRange: "UP_TO_ONE"
-                  ]
+                  destinations:
+                    destination_1:
+                      fullName: "Neda Masjedi"
+                      phoneNumber: "09123456788"
+                      addressBase: "Tehran, Sattarkhan"
+                      addressHouseNumber: "10"
+                      addressHomeUnit: "3"
+                      comment: "some comment for this destination"
+                      priceRange: "UP_TO_ONE"
                   orderType: "BIKE"
       responses:
         200:
@@ -127,15 +127,15 @@ paths:
                     sourceAddressHouseNumber: "4"
                     sourceAddressHomeUnit: "3"
                     sourceComment: "Sample description for the order"
-                    destinations: [destination_1:
-                                     fullName: "Neda Masjedi"
-                                     phoneNumber: "09123456788"
-                                     addressBase: "Tehran, Sattarkhan"
-                                     addressHouseNumber: "10"
-                                     addressHomeUnit: "3"
-                                     comment: "some comment for this destination"
-                                     priceRange: "UP_TO_ONE"
-                    ]
+                    destinations:
+                      destination_1:
+                       fullName: "Neda Masjedi"
+                       phoneNumber: "09123456788"
+                       addressBase: "Tehran, Sattarkhan"
+                       addressHouseNumber: "10"
+                       addressHomeUnit: "3"
+                       comment: "some comment for this destination"
+                       priceRange: "UP_TO_ONE"
                     orderType: "BIKE"
         404:
           description: "order not found!"
