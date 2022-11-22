@@ -141,6 +141,24 @@ paths:
           description: "order not found!"
         500:
           description: "Internal server error!"
+    delete:
+      tags:
+        - "requests"
+      summary: "deletes the BoxOrder"
+      operationId: "removeBoxOrder"
+      parameters:
+        - in: path
+          required: true
+          name: orderId
+          description: order id
+      responses:
+        200:
+          description: "order has been removed!"
+        404:
+          description: "order not found!"
+        500:
+          description: "Internal server error!"
+
 
 components:
   schemas:

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>BoxDemo</title>
+</head>
+<body>
+<div class="container my-2" align="center">
+
+    <h3>Order List</h3>
+    <table style="width:80%" border="1"
+           class = "table table-striped table-responsive-md">
+        <tbody>
+            <tr th:each="order:${orders}">
+                <th>id</th>
+                <td th:text="${order.id}"></td>
+                <th>owner full name</th>
+                <td th:text="${order.ownerFullName}"></td>
+                <th>owner phone number</th>
+                <td th:text="${order.ownerPhoneNumber}"></td>
+                <th>source full name</th>
+                <td th:text="${order.sourceFullName}"></td>
+                <th>source phone number</th>
+                <td th:text="${order.sourcePhoneNumber}"></td>
+                <th>source address base</th>
+                <td th:text="${order.sourceAddressBase}"></td>
+                <th>source house number</th>
+                <td th:text="${order.sourceAddressHouseNumber}"></td>
+                <th>source home unit</th>
+                <td th:text="${order.sourceAddressHomeUnit}"></td>
+                <th>source comment</th>
+                <td th:text="${order.sourceComment}"></td>
+                <th>destinations</th>
+                <td th:text="${order.destinations}"></td>
+                <th>order type</th>
+                <td th:text="${order.orderType}"></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

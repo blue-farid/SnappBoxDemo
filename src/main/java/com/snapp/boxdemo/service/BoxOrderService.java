@@ -7,4 +7,6 @@ public interface BoxOrderService {
     void removeBoxOrder(long id);
     void saveOrUpdateBoxOrder(BoxOrderDto dto);
     boolean exist(long id);
+
+    Iterable<BoxOrderDto> getAll();
 }
