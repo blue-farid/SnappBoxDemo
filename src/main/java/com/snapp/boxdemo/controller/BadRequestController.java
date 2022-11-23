@@ -6,6 +6,7 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -20,8 +21,8 @@ public class BadRequestController implements ErrorController {
     private final MessageSource source;
 
     @RequestMapping("/error")
-    public ResponseEntity<BaseResponseDto<Object>> error() {
-        return new ResponseEntity<>(BaseResponseDto.builder().message(source.getMessage("error.bad.api.call", null,
-                Locale.getDefault())).build(), HttpStatus.BAD_REQUEST);
+    public ResponseEntity<BaseResponseDto<Object>> error(@RequestHeader("Accept-Language") Locale locale) {
+        return new ResponseEntity<>(BaseResponseDto.builder().message(source.getMessage("error.badApiCall", null,
+                locale)).build(), HttpStatus.BAD_REQUEST);
     }
 }

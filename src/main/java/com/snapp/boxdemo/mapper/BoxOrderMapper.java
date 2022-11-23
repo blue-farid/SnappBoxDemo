@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 public interface BoxOrderMapper {
     BoxOrderMapper INSTANCE = Mappers.getMapper(BoxOrderMapper.class);
 
+    @Mapping(target = "ownerId", source = "owner.id")
     @Mapping(target = "ownerFullName", source = "owner.fullName")
     @Mapping(target = "ownerPhoneNumber", source = "owner.phoneNumber")
     @Mapping(target = "sourceAddressBase", source = "source.address.base")
@@ -19,6 +20,8 @@ public interface BoxOrderMapper {
     @Mapping(target = "sourceComment", source = "source.comment")
     @Mapping(target = "sourceFullName", source = "source.fullName")
     BoxOrderDto boxOrderToBoxOrderDto(BoxOrder order);
+
+    @Mapping(source = "ownerId", target = "owner.id")
     @Mapping(source = "ownerFullName", target = "owner.fullName")
     @Mapping(source = "ownerPhoneNumber", target = "owner.phoneNumber")
     @Mapping(source = "sourceAddressBase", target = "source.address.base")

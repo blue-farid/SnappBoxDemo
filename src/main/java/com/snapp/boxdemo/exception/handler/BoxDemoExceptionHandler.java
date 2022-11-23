@@ -10,11 +10,11 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.ServletException;
-import javax.validation.ValidationException;
 
 /**
  * Custom Exception handler
@@ -37,8 +37,8 @@ public class BoxDemoExceptionHandler {
         return new ResponseEntity<>(BaseResponseDto.builder().message(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<BaseResponseDto<Object>> handleValidationException(Exception e) {
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<BaseResponseDto<Object>> handleValidationException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(BaseResponseDto.builder().message(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
     }

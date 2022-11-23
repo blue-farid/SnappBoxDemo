@@ -5,6 +5,7 @@ import com.snapp.boxdemo.model.entity.BoxOrder;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -16,6 +17,8 @@ import java.util.List;
 @Data
 public class BoxOrderDto implements Serializable {
     private Long id;
+    @NotNull(message = "{error.empty.ownerId}")
+    private Long ownerId;
     @NotBlank(message = "ownerFullName can't empty!")
     @Size(max = 100, message = "ownerFullName max size is 100!")
     private String ownerFullName;

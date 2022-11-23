@@ -20,32 +20,40 @@ public class BoxOrderController {
     private final MessageSource source;
 
     @GetMapping("/{orderId}")
-    public ResponseEntity<BaseResponseDto<BoxOrderDto>> getBoxOrder(@PathVariable Long orderId) {
+    public ResponseEntity<BaseResponseDto<BoxOrderDto>> getBoxOrder(@PathVariable Long orderId,
+                                                                    @RequestHeader(value = "Accept-Language",
+                                                                            required = false) Locale locale) {
         BoxOrderDto dto = service.getBoxOrder(orderId);
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(dto).message(
-                source.getMessage("get.success", null, Locale.getDefault())
+                source.getMessage("get.success", null, locale)
         ).build());
     }
 
     @PostMapping
-    public ResponseEntity<BaseResponseDto<BoxOrderDto>> postBoxOrder(@RequestBody @Valid BoxOrderDto dto) {
+    public ResponseEntity<BaseResponseDto<BoxOrderDto>> postBoxOrder(@Valid @RequestBody BoxOrderDto dto,
+                                                                     @RequestHeader(value = "Accept-Language",
+                                                                             required = false) Locale locale) {
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(service.saveBoxOrder(dto)).message(
-                source.getMessage("save.success", null, Locale.getDefault())
+                source.getMessage("save.success", null, locale)
         ).build());
     }
 
     @PutMapping
-    public ResponseEntity<BaseResponseDto<BoxOrderDto>> putBoxOrder(@RequestBody @Valid BoxOrderDto dto) {
+    public ResponseEntity<BaseResponseDto<BoxOrderDto>> putBoxOrder(@RequestBody @Valid BoxOrderDto dto,
+                                                                    @RequestHeader(value = "Accept-Language",
+                                                                            required = false) Locale locale) {
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(service.updateBoxOrder(dto)).message(
-                source.getMessage("update.success", null, Locale.getDefault())
+                source.getMessage("update.success", null, locale)
         ).build());
     }
 
     @DeleteMapping("/{orderId}")
-    public ResponseEntity<BaseResponseDto<Object>> deleteBoxOrder(@PathVariable Long orderId) {
+    public ResponseEntity<BaseResponseDto<Object>> deleteBoxOrder(@PathVariable Long orderId,
+                                                                  @RequestHeader(value = "Accept-Language",
+                                                                          required = false) Locale locale) {
         service.removeBoxOrder(orderId);
         return ResponseEntity.ok().body(BaseResponseDto.builder().message(
-                source.getMessage("remove.success", null, Locale.getDefault())
+                source.getMessage("remove.success", null, locale)
         ).build());
     }
 }
