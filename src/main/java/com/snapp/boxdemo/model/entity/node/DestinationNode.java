@@ -1,7 +1,7 @@
-package com.snapp.boxdemo.model.node;
+package com.snapp.boxdemo.model.entity.node;
 
-import com.snapp.boxdemo.model.BoxOrder;
-import com.snapp.boxdemo.model.PriceRange;
+import com.snapp.boxdemo.model.entity.BoxOrder;
+import com.snapp.boxdemo.model.entity.PriceRange;
 
 import javax.persistence.*;
 

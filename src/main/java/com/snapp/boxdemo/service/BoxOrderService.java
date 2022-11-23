@@ -1,12 +1,16 @@
 package com.snapp.boxdemo.service;
 
-import com.snapp.boxdemo.dto.BoxOrderDto;
+import com.snapp.boxdemo.model.dto.BoxOrderDto;
+
+import java.util.List;
 
 public interface BoxOrderService {
     BoxOrderDto getBoxOrder(long id);
     void removeBoxOrder(long id);
-    void saveOrUpdateBoxOrder(BoxOrderDto dto);
+    BoxOrderDto updateBoxOrder(BoxOrderDto dto);
+
+    BoxOrderDto saveBoxOrder(BoxOrderDto dto);
     boolean exist(long id);
 
-    Iterable<BoxOrderDto> getAll();
+    List<BoxOrderDto> getAll();
 }

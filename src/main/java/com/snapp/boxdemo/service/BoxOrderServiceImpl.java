@@ -1,14 +1,17 @@
 package com.snapp.boxdemo.service;
 
-import com.snapp.boxdemo.dto.BoxOrderDto;
+import com.snapp.boxdemo.model.dto.BoxOrderDto;
+import com.snapp.boxdemo.exception.DuplicateEntityException;
+import com.snapp.boxdemo.exception.NotFoundException;
 import com.snapp.boxdemo.mapper.BoxOrderMapper;
-import com.snapp.boxdemo.model.BoxOrder;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
@@ -16,19 +19,35 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     private final BoxOrderMapper mapper = BoxOrderMapper.INSTANCE;
     private final BoxOrderRepository repository;
 
+    private final MessageSource source;
+
     @Override
     public BoxOrderDto getBoxOrder(long id) {
-        return repository.findById(id).map(mapper::boxOrderToBoxOrderDto).orElse(null);
+        BoxOrderDto dto = repository.findById(id).map(mapper::boxOrderToBoxOrderDto).orElse(null);
+        if (dto == null)
+            throw new NotFoundException(source.getMessage("error.notFound", null, Locale.getDefault()));
+        return dto;
     }
 
     @Override
     public void removeBoxOrder(long id) {
+        if (repository.existsById(id))
+            throw new NotFoundException(source.getMessage("error.notFound", null, Locale.getDefault()));
         repository.deleteById(id);
     }
 
     @Override
-    public void saveOrUpdateBoxOrder(BoxOrderDto dto) {
-        repository.save(mapper.boxOrderDtoToBoxOrder(dto));
+    public BoxOrderDto updateBoxOrder(BoxOrderDto dto) {
+        if (repository.existsById(dto.getId()))
+            throw new NotFoundException(source.getMessage("error.notFound", null, Locale.getDefault()));
+        return mapper.boxOrderToBoxOrderDto(repository.save(mapper.boxOrderDtoToBoxOrder(dto)));
+    }
+
+    @Override
+    public BoxOrderDto saveBoxOrder(BoxOrderDto dto) {
+        if (repository.existsById(dto.getId()))
+            throw new DuplicateEntityException(source.getMessage("error.duplicate", null, Locale.getDefault()));
+        return mapper.boxOrderToBoxOrderDto(repository.save(mapper.boxOrderDtoToBoxOrder(dto)));
     }
 
     @Override
@@ -37,12 +56,9 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     }
 
     @Override
-    public Iterable<BoxOrderDto> getAll() {
-        Iterable<BoxOrder> orders = repository.findAll();
-        List<BoxOrderDto> dtos = new ArrayList<>();
-        for (BoxOrder order : orders) {
-            dtos.add(mapper.boxOrderToBoxOrderDto(order));
-        }
-        return dtos;
+    public List<BoxOrderDto> getAll() {
+        List<BoxOrderDto> orders = new ArrayList<>();
+        repository.findAll().forEach(order -> orders.add(mapper.boxOrderToBoxOrderDto(order)));
+        return orders;
     }
 }

@@ -1,6 +1,6 @@
-package com.snapp.boxdemo.model.node;
+package com.snapp.boxdemo.model.entity.node;
 
-import com.snapp.boxdemo.model.Address;
+import com.snapp.boxdemo.model.entity.Address;
 import lombok.Getter;
 import lombok.Setter;
 

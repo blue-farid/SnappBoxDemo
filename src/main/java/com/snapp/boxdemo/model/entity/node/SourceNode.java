@@ -1,4 +1,4 @@
-package com.snapp.boxdemo.model.node;
+package com.snapp.boxdemo.model.entity.node;
 
 import javax.persistence.Entity;
 

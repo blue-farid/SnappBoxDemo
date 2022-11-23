@@ -1,7 +1,7 @@
-package com.snapp.boxdemo.model;
+package com.snapp.boxdemo.model.entity;
 
-import com.snapp.boxdemo.model.node.DestinationNode;
-import com.snapp.boxdemo.model.node.SourceNode;
+import com.snapp.boxdemo.model.entity.node.DestinationNode;
+import com.snapp.boxdemo.model.entity.node.SourceNode;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;

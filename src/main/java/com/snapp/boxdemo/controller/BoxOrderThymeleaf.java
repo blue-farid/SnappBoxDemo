@@ -1,6 +1,6 @@
 package com.snapp.boxdemo.controller;
 
-import com.snapp.boxdemo.dto.BoxOrderDto;
+import com.snapp.boxdemo.model.dto.BoxOrderDto;
 import com.snapp.boxdemo.service.BoxOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;

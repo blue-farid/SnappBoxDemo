@@ -1,4 +1,4 @@
-package com.snapp.boxdemo.model;
+package com.snapp.boxdemo.model.entity;
 
 import lombok.Getter;
 import lombok.Setter;
