@@ -18,13 +18,13 @@ public class BoxOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id")
     private Client owner;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "node_id")
+    @JoinColumn(name = "source_node_id")
     private SourceNode source;
-    @OneToMany(mappedBy = "boxOrder", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "boxOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private List<DestinationNode> destinations;
     @Column
     @Enumerated(EnumType.STRING)
