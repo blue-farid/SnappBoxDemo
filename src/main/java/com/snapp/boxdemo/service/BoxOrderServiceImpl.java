@@ -1,15 +1,19 @@
 package com.snapp.boxdemo.service;
 
-import com.snapp.boxdemo.model.dto.BoxOrderDto;
 import com.snapp.boxdemo.exception.DuplicateEntityException;
 import com.snapp.boxdemo.exception.NotFoundException;
 import com.snapp.boxdemo.mapper.BoxOrderMapper;
+import com.snapp.boxdemo.model.dto.BoxOrderDto;
+import com.snapp.boxdemo.model.entity.BoxOrder;
+import com.snapp.boxdemo.model.entity.Client;
+import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -58,8 +62,17 @@ public class BoxOrderServiceImpl implements BoxOrderService {
 
     @Override
     public List<BoxOrderDto> getAll() {
-        List<BoxOrderDto> orders = new ArrayList<>();
-        repository.findAll().forEach(order -> orders.add(mapper.boxOrderToBoxOrderDto(order)));
-        return orders;
+        return repository.findAll().stream().map(mapper::boxOrderToBoxOrderDto).toList();
+    }
+
+    @Override
+    public List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper) {
+        BoxOrder boxOrder = BoxOrder.builder().owner(
+                Client.builder().fullName(wrapper.getOwnerFullName())
+                        .id(Long.valueOf(wrapper.getOwnerId()))
+                        .phoneNumber(wrapper.getOwnerPhoneNumber()).build())
+                .orderType(wrapper.getOrderType()).creationDate(wrapper.getCreationDate()).build();
+        return repository.findAll(Example.of(boxOrder), Sort.by(Sort.Direction.DESC, "creationDate"))
+                .stream().map(mapper::boxOrderToBoxOrderDto).toList();
     }
 }

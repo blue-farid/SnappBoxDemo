@@ -2,13 +2,18 @@ package com.snapp.boxdemo.controller;
 
 import com.snapp.boxdemo.model.dto.BaseResponseDto;
 import com.snapp.boxdemo.model.dto.BoxOrderDto;
+import com.snapp.boxdemo.model.entity.OrderType;
+import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.service.BoxOrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 @RestController
@@ -55,5 +60,23 @@ public class BoxOrderController {
         return ResponseEntity.ok().body(BaseResponseDto.builder().message(
                 source.getMessage("remove.success", null, locale)
         ).build());
+    }
+
+    @GetMapping
+    public ResponseEntity<BaseResponseDto<Object>> searchBoxOrder(
+            @RequestParam String ownerFullName,
+            @RequestParam String ownerId,
+            @RequestParam String ownerPhoneNumber,
+            @RequestParam OrderType orderType,
+            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date creationDate,
+            @RequestHeader("Accept-Language") Locale locale
+    ) {
+        List<BoxOrderDto> orders = service.searchBoxOrders(BoxOrderSearchWrapper.builder()
+                .ownerId(ownerId).ownerFullName(ownerFullName).ownerPhoneNumber(ownerPhoneNumber)
+                .orderType(orderType).creationDate(creationDate).build());
+
+        return ResponseEntity.ok().body(BaseResponseDto.builder().message(
+                source.getMessage("search.success", null, locale)
+        ).result(orders).build());
     }
 }

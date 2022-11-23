@@ -4,6 +4,7 @@ import com.snapp.boxdemo.model.entity.OrderType;
 import com.snapp.boxdemo.model.entity.BoxOrder;
 import lombok.Data;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -37,6 +38,7 @@ public class BoxOrderDto implements Serializable {
     private String sourceAddressHomeUnit;
     @Size(max = 1000, message = "source max size is 1000!")
     private String sourceComment;
+    @Valid
     private List<DestinationNodeDto> destinations;
     private OrderType orderType;
 }

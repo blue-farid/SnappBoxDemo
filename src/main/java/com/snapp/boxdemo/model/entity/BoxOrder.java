@@ -2,6 +2,7 @@ package com.snapp.boxdemo.model.entity;
 
 import com.snapp.boxdemo.model.entity.node.DestinationNode;
 import com.snapp.boxdemo.model.entity.node.SourceNode;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
@@ -14,6 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
 public class BoxOrder {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
