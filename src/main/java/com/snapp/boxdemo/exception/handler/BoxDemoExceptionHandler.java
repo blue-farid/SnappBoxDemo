@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.servlet.ServletException;
+import java.util.Objects;
 
 /**
  * Custom Exception handler
@@ -40,6 +41,8 @@ public class BoxDemoExceptionHandler {
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<BaseResponseDto<Object>> handleValidationException(MethodArgumentNotValidException e) {
         log.error(e.getMessage(), e);
-        return new ResponseEntity<>(BaseResponseDto.builder().message(e.getMessage()).build(), HttpStatus.BAD_REQUEST);
+        final StringBuilder builder = new StringBuilder();
+        e.getAllErrors().forEach(error -> builder.append(Objects.requireNonNull(error.getDefaultMessage())).append(", "));
+        return new ResponseEntity<>(BaseResponseDto.builder().message(builder.toString()).build(), HttpStatus.BAD_REQUEST);
     }
 }

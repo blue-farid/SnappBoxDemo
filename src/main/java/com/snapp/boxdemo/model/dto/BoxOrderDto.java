@@ -18,25 +18,20 @@ import java.util.List;
 @Data
 public class BoxOrderDto implements Serializable {
     private Long id;
-    @NotNull(message = "{error.empty.ownerId}")
+    @NotNull(message = "{error.valid.empty.ownerId}")
     private Long ownerId;
-    @NotBlank(message = "ownerFullName can't empty!")
-    @Size(max = 100, message = "ownerFullName max size is 100!")
-    private String ownerFullName;
-    @Pattern(regexp = "^09\\d{9}$", message = "phone number is not valid!")
-    private String ownerPhoneNumber;
-    @NotBlank(message = "sourceFullName can't be empty!")
-    @Size(max = 100, message = "sourceFullName max size is 100!")
+    @NotBlank(message = "{error.valid.empty.sourceFullName}")
+    @Size(max = 100, message = "{error.valid.length}")
     private String sourceFullName;
-    @Pattern(regexp = "^09\\d{9}$", message = "sourcePhoneNumber is not valid!")
+    @Pattern(regexp = "^09\\d{9}$", message = "{error.valid.phone}")
     private String sourcePhoneNumber;
-    @Size(min = 10, max = 500, message = "sourceAddressBase length should be between 10 and 500!")
+    @Size(min = 10, max = 500, message = "{error.valid.length}")
     private String sourceAddressBase;
-    @Pattern(regexp = "\\d{1,10}", message = "sourceAddressHouseNumber is not valid!")
+    @Pattern(regexp = "\\d{1,10}", message = "{error.valid}")
     private String sourceAddressHouseNumber;
-    @Pattern(regexp = "\\d{1,10}", message = "sourceAddressHouseUnit is not valid!")
+    @Pattern(regexp = "\\d{1,10}", message = "{error.valid}")
     private String sourceAddressHomeUnit;
-    @Size(max = 1000, message = "source max size is 1000!")
+    @Size(max = 1000, message = "{error.valid}")
     private String sourceComment;
     @Valid
     private List<DestinationNodeDto> destinations;

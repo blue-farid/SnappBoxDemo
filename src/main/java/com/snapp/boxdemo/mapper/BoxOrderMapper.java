@@ -11,8 +11,6 @@ public interface BoxOrderMapper {
     BoxOrderMapper INSTANCE = Mappers.getMapper(BoxOrderMapper.class);
 
     @Mapping(target = "ownerId", source = "owner.id")
-    @Mapping(target = "ownerFullName", source = "owner.fullName")
-    @Mapping(target = "ownerPhoneNumber", source = "owner.phoneNumber")
     @Mapping(target = "sourceAddressBase", source = "source.address.base")
     @Mapping(target = "sourcePhoneNumber", source = "source.phoneNumber")
     @Mapping(target = "sourceAddressHomeUnit", source = "source.address.homeUnit")
@@ -22,8 +20,6 @@ public interface BoxOrderMapper {
     BoxOrderDto boxOrderToBoxOrderDto(BoxOrder order);
 
     @Mapping(source = "ownerId", target = "owner.id")
-    @Mapping(source = "ownerFullName", target = "owner.fullName")
-    @Mapping(source = "ownerPhoneNumber", target = "owner.phoneNumber")
     @Mapping(source = "sourceAddressBase", target = "source.address.base")
     @Mapping(source = "sourcePhoneNumber", target = "source.phoneNumber")
     @Mapping(source = "sourceAddressHomeUnit", target = "source.address.homeUnit")
