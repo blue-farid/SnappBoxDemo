@@ -10,7 +10,10 @@ import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -25,6 +28,8 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     private final BoxOrderRepository repository;
 
     private final MessageSource source;
+
+    private final Environment env;
 
     @Override
     public BoxOrderDto getBoxOrder(long id) {
@@ -66,13 +71,17 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     }
 
     @Override
-    public List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper) {
+    public List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper, int page) {
+        Pageable pageable = PageRequest.of(page, Integer.parseInt(
+                Objects.requireNonNull(env.getProperty("spring.data.rest.default-page-size")))).
+                withSort(Sort.Direction.DESC, "creationDate");
+
         BoxOrder boxOrder = BoxOrder.builder().owner(
                 Client.builder().fullName(wrapper.getOwnerFullName())
                         .id(Long.valueOf(wrapper.getOwnerId()))
                         .phoneNumber(wrapper.getOwnerPhoneNumber()).build())
                 .orderType(wrapper.getOrderType()).creationDate(wrapper.getCreationDate()).build();
-        return repository.findAll(Example.of(boxOrder), Sort.by(Sort.Direction.DESC, "creationDate"))
+        return repository.findAll(Example.of(boxOrder), pageable)
                 .stream().map(mapper::boxOrderToBoxOrderDto).toList();
     }
 }

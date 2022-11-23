@@ -15,5 +15,5 @@ public interface BoxOrderService {
 
     List<BoxOrderDto> getAll();
 
-    List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper);
+    List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper, int page);
 }

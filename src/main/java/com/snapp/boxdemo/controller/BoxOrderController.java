@@ -69,11 +69,12 @@ public class BoxOrderController {
             @RequestParam String ownerPhoneNumber,
             @RequestParam OrderType orderType,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date creationDate,
+            @RequestParam int page,
             @RequestHeader("Accept-Language") Locale locale
     ) {
         List<BoxOrderDto> orders = service.searchBoxOrders(BoxOrderSearchWrapper.builder()
                 .ownerId(ownerId).ownerFullName(ownerFullName).ownerPhoneNumber(ownerPhoneNumber)
-                .orderType(orderType).creationDate(creationDate).build());
+                .orderType(orderType).creationDate(creationDate).build(), page);
 
         return ResponseEntity.ok().body(BaseResponseDto.builder().message(
                 source.getMessage("search.success", null, locale)
