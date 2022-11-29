@@ -65,7 +65,7 @@ public class BoxOrderController {
     @GetMapping
     public ResponseEntity<BaseResponseDto<Object>> searchBoxOrder(
             @RequestParam String ownerFullName,
-            @RequestParam String ownerId,
+            @RequestParam Long ownerId,
             @RequestParam String ownerPhoneNumber,
             @RequestParam OrderType orderType,
             @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date creationDate,

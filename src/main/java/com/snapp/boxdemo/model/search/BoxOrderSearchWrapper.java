@@ -10,7 +10,7 @@ import java.util.Date;
 @Builder
 public class BoxOrderSearchWrapper {
     private String ownerFullName;
-    private String ownerId;
+    private Long ownerId;
     private String ownerPhoneNumber;
     private OrderType orderType;
     private Date creationDate;
