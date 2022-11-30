@@ -1,11 +1,14 @@
 package com.snapp.boxdemo.service;
 
+import com.snapp.boxdemo.mapper.BoxOrderMapper;
 import com.snapp.boxdemo.model.dto.BoxOrderDto;
 import com.snapp.boxdemo.model.dto.DestinationNodeDto;
 import com.snapp.boxdemo.model.entity.OrderType;
 import com.snapp.boxdemo.model.entity.PriceRange;
 import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -27,6 +30,20 @@ class BoxOrderServiceTest {
 
     @Autowired
     BoxOrderRepository repository;
+
+    BoxOrderMapper mapper = BoxOrderMapper.INSTANCE;
+
+    @Autowired
+
+    @Before
+    public void setUp() {
+
+    }
+
+    @After
+    public void tearDown() {
+        repository.deleteAll();
+    }
 
     @Test
     void getBoxOrder_ok() {
