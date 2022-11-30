@@ -18,7 +18,7 @@ public abstract class Node {
     private String fullName;
     @Column
     private String phoneNumber;
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "address_id")
     private Address address;
     @Column

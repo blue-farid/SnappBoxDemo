@@ -29,7 +29,7 @@ class BoxOrderServiceTest {
     BoxOrderRepository repository;
 
     @Test
-    void getBoxOrder() {
+    void getBoxOrder_ok() {
         BoxOrderDto dto = service.getBoxOrder(1L);
         assertEquals(1L, dto.getId());
         assertEquals(1L, dto.getOwnerId());
@@ -49,7 +49,7 @@ class BoxOrderServiceTest {
     }
 
     @Test
-    void removeBoxOrder() {
+    void removeBoxOrder_ok() {
         long id = 1;
         assertTrue(repository.existsById(id));
         service.removeBoxOrder(id);
@@ -57,20 +57,19 @@ class BoxOrderServiceTest {
     }
 
     @Test
-    void updateBoxOrder() {
+    void updateBoxOrder_ok() {
         String newSourceComment = "new sample comment";
         long id = 1L;
         assertTrue(repository.existsById(id));
         BoxOrderDto dto = service.getBoxOrder(id);
         assertNotEquals(newSourceComment, dto.getSourceComment());
         dto.setSourceComment(newSourceComment);
-        service.saveBoxOrder(dto);
-        dto = service.getBoxOrder(id);
+        dto = service.updateBoxOrder(dto);
         assertEquals(newSourceComment, dto.getSourceComment());
     }
 
     @Test
-    void saveBoxOrder() {
+    void saveBoxOrder_ok() {
         long ownerId = 1;
         String comment = "new comment";
         String addressBase = "new address base";
@@ -122,28 +121,28 @@ class BoxOrderServiceTest {
     }
 
     @Test
-    void exist() {
+    void exist_ok() {
         long id = 1;
         assertEquals(repository.existsById(id), service.exist(id));
     }
 
     @Test
-    void getAll() {
+    void getAll_ok() {
         List<BoxOrderDto> dto = service.getAll();
         assertNotNull(dto);
-        assertEquals(1, dto.size());
+        assertEquals(2, dto.size());
     }
 
     @Test
-    void searchBoxOrders() {
+    void searchBoxOrders_ok() {
         BoxOrderSearchWrapper wrapper = BoxOrderSearchWrapper.builder()
                 .ownerId(1L).build();
 
-        List<BoxOrderDto> list = service.searchBoxOrders(wrapper, 1);
+        List<BoxOrderDto> list = service.searchBoxOrders(wrapper, 0);
         assertEquals(1, list.get(0).getOwnerId());
-        assertEquals(OrderType.BIKE, list.get(0).getOrderType());
-        list = service.searchBoxOrders(wrapper, 2);
         assertEquals(OrderType.CAR, list.get(0).getOrderType());
+        list = service.searchBoxOrders(wrapper, 1);
+        assertEquals(OrderType.BIKE, list.get(0).getOrderType());
         wrapper.setOwnerId(2L);
         list = service.searchBoxOrders(wrapper, 1);
         assertEquals(0, list.size());

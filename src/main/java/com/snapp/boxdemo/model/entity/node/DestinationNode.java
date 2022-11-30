@@ -10,6 +10,7 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
+@DiscriminatorValue("destination_node")
 public class DestinationNode extends Node {
     @Column
     @Enumerated(EnumType.STRING)

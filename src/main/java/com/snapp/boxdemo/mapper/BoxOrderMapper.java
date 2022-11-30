@@ -1,7 +1,9 @@
 package com.snapp.boxdemo.mapper;
 
 import com.snapp.boxdemo.model.dto.BoxOrderDto;
+import com.snapp.boxdemo.model.dto.DestinationNodeDto;
 import com.snapp.boxdemo.model.entity.BoxOrder;
+import com.snapp.boxdemo.model.entity.node.DestinationNode;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
@@ -17,7 +19,6 @@ public interface BoxOrderMapper {
     @Mapping(target = "sourceAddressHouseNumber", source = "source.address.houseNumber")
     @Mapping(target = "sourceComment", source = "source.comment")
     @Mapping(target = "sourceFullName", source = "source.fullName")
-    @Mapping(target = "destinations.addressBase", source = "destinations.address.base")
     BoxOrderDto boxOrderToBoxOrderDto(BoxOrder order);
 
     @Mapping(source = "ownerId", target = "owner.id")
@@ -28,4 +29,14 @@ public interface BoxOrderMapper {
     @Mapping(source = "sourceComment", target = "source.comment")
     @Mapping(source = "sourceFullName", target = "source.fullName")
     BoxOrder boxOrderDtoToBoxOrder(BoxOrderDto dto);
+
+    @Mapping(target = "address.base", source = "addressBase")
+    @Mapping(target = "address.homeUnit", source = "addressHomeUnit")
+    @Mapping(target = "address.houseNumber", source = "addressHouseNumber")
+    DestinationNode destinationNodeDtoToDestinationNode(DestinationNodeDto destinationNodeDto);
+
+    @Mapping(source = "address.base", target = "addressBase")
+    @Mapping(source = "address.homeUnit", target = "addressHomeUnit")
+    @Mapping(source = "address.houseNumber", target = "addressHouseNumber")
+    DestinationNodeDto destinationNodeDtoToDestinationNode(DestinationNode destinationNode);
 }

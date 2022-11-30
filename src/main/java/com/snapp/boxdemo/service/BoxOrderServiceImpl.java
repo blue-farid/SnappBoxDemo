@@ -41,14 +41,14 @@ public class BoxOrderServiceImpl implements BoxOrderService {
 
     @Override
     public void removeBoxOrder(long id) {
-        if (repository.existsById(id))
+        if (!repository.existsById(id))
             throw new NotFoundException(source.getMessage("error.notFound", null, Locale.ENGLISH));
         repository.deleteById(id);
     }
 
     @Override
     public BoxOrderDto updateBoxOrder(BoxOrderDto dto) {
-        if (repository.existsById(dto.getId()))
+        if (!repository.existsById(dto.getId()))
             throw new NotFoundException(source.getMessage("error.notFound", null, Locale.ENGLISH));
         return mapper.boxOrderToBoxOrderDto(repository.save(mapper.boxOrderDtoToBoxOrder(dto)));
     }
