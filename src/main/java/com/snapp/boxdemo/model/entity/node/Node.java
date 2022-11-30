@@ -6,7 +6,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 
-@MappedSuperclass
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@Entity
 @Getter
 @Setter
 public abstract class Node {
@@ -18,6 +19,7 @@ public abstract class Node {
     @Column
     private String phoneNumber;
     @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "address_id")
     private Address address;
     @Column
     private String comment;

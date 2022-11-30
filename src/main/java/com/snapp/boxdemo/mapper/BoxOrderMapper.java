@@ -17,6 +17,7 @@ public interface BoxOrderMapper {
     @Mapping(target = "sourceAddressHouseNumber", source = "source.address.houseNumber")
     @Mapping(target = "sourceComment", source = "source.comment")
     @Mapping(target = "sourceFullName", source = "source.fullName")
+    @Mapping(target = "destinations.addressBase", source = "destinations.address.base")
     BoxOrderDto boxOrderToBoxOrderDto(BoxOrder order);
 
     @Mapping(source = "ownerId", target = "owner.id")

@@ -57,7 +57,9 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     public BoxOrderDto saveBoxOrder(BoxOrderDto dto) {
         if (!Objects.isNull(dto.getId()) && repository.existsById(dto.getId()))
             throw new DuplicateEntityException(source.getMessage("error.duplicate", null, Locale.ENGLISH));
-        return mapper.boxOrderToBoxOrderDto(repository.save(mapper.boxOrderDtoToBoxOrder(dto)));
+        BoxOrder order = mapper.boxOrderDtoToBoxOrder(dto);
+        BoxOrder result = repository.save(order);
+        return mapper.boxOrderToBoxOrderDto(result);
     }
 
     @Override
@@ -78,7 +80,7 @@ public class BoxOrderServiceImpl implements BoxOrderService {
 
         BoxOrder boxOrder = BoxOrder.builder().owner(
                 Client.builder().fullName(wrapper.getOwnerFullName())
-                        .id(Long.valueOf(wrapper.getOwnerId()))
+                        .id(wrapper.getOwnerId())
                         .phoneNumber(wrapper.getOwnerPhoneNumber()).build())
                 .orderType(wrapper.getOrderType()).creationDate(wrapper.getCreationDate()).build();
         return repository.findAll(Example.of(boxOrder), pageable)

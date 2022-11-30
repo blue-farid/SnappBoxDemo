@@ -88,6 +88,8 @@ class BoxOrderServiceTest {
         destinationNodeDto.setPriceRange(priceRange);
         destinationNodeDto.setAddressHomeUnit(addressHomeUnit);
         destinationNodeDto.setFullName(fullName);
+        destinationNodeDto.setAddressBase(addressBase);
+        destinationNodeDtoList.add(destinationNodeDto);
         BoxOrderDto dto = new BoxOrderDto();
         dto.setOrderType(orderType);
         dto.setOwnerId(ownerId);
@@ -115,6 +117,8 @@ class BoxOrderServiceTest {
         assertEquals(addressHouseNumber, dto.getSourceAddressHouseNumber());
         assertEquals(orderType, dto.getOrderType());
         assertEquals(priceRange, dto.getDestinations().get(0).getPriceRange());
+        repository.deleteById(dto.getId());
+        assertFalse(repository.existsById(dto.getId()));
     }
 
     @Test
