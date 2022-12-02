@@ -56,11 +56,11 @@ public class BoxOrderController {
 
     @GetMapping
     public ResponseEntity<BaseResponseDto<Object>> searchBoxOrder(
-            @RequestParam String ownerFullName,
-            @RequestParam Long ownerId,
-            @RequestParam String ownerPhoneNumber,
-            @RequestParam OrderType orderType,
-            @RequestParam @DateTimeFormat(pattern = "yyyy-MM-dd") Date creationDate,
+            @RequestParam(required = false) String ownerFullName,
+            @RequestParam(required = false) Long ownerId,
+            @RequestParam(required = false) String ownerPhoneNumber,
+            @RequestParam(required = false) OrderType orderType,
+            @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date creationDate,
             @RequestParam int page, Locale locale
     ) {
         List<BoxOrderDto> orders = service.searchBoxOrders(BoxOrderSearchWrapper.builder()
