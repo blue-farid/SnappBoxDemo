@@ -19,7 +19,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -38,7 +39,8 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest
+@SpringBootTest
+@AutoConfigureMockMvc
 public class EndToEndTest {
     @Autowired
     MockMvc mockMvc;
@@ -181,7 +183,7 @@ public class EndToEndTest {
     void postBoxOrder_ok() {
         // given
         DestinationNodeDto destinationNodeDto = new DestinationNodeDto();
-        destinationNodeDto.setId(1L);
+        destinationNodeDto.setId(4L);
         destinationNodeDto.setComment("sample destination comment");
         destinationNodeDto.setFullName("Neda Masjedi");
         destinationNodeDto.setAddressBase("sample address base");
@@ -193,7 +195,7 @@ public class EndToEndTest {
         destinationNodeDtoList.add(destinationNodeDto);
 
         BoxOrderDto order0 = new BoxOrderDto();
-        order0.setId(1L);
+        order0.setId(4L);
         order0.setOwnerId(1L);
         order0.setOrderType(OrderType.BIKE);
         order0.setSourceComment("sample source comment");
@@ -203,9 +205,6 @@ public class EndToEndTest {
         order0.setSourceAddressBase("sample address base");
         order0.setSourceAddressHomeUnit("1");
         order0.setSourceAddressHouseNumber("1");
-
-        given(boxOrderService.saveBoxOrder(any(BoxOrderDto.class))).willReturn(boxOrderMapper.boxOrderToBoxOrderDto(BoxOrder.builder()
-                .id(order0.getId()).build()));
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
@@ -227,7 +226,7 @@ public class EndToEndTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("save.success", null, locale)))
-                .andExpect(jsonPath("$.result.id").value(1L));
+                .andExpect(jsonPath("$.result.id").value(4L));
     }
 
     @Test

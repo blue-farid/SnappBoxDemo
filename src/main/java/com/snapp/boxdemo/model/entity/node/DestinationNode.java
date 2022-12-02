@@ -2,8 +2,7 @@ package com.snapp.boxdemo.model.entity.node;
 
 import com.snapp.boxdemo.model.entity.BoxOrder;
 import com.snapp.boxdemo.model.entity.PriceRange;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 

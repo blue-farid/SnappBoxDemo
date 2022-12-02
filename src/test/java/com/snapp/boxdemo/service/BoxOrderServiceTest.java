@@ -1,144 +1,73 @@
 package com.snapp.boxdemo.service;
 
-import com.snapp.boxdemo.mapper.BoxOrderMapper;
-import com.snapp.boxdemo.mapper.ClientMapper;
 import com.snapp.boxdemo.model.dto.BoxOrderDto;
-import com.snapp.boxdemo.model.dto.ClientDto;
-import com.snapp.boxdemo.model.dto.DestinationNodeDto;
-import com.snapp.boxdemo.model.entity.OrderType;
-import com.snapp.boxdemo.model.entity.PriceRange;
+import com.snapp.boxdemo.model.entity.*;
+import com.snapp.boxdemo.model.entity.node.DestinationNode;
+import com.snapp.boxdemo.model.entity.node.SourceNode;
 import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
-import com.snapp.boxdemo.repository.ClientRepository;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 
 @SpringBootTest
 @ActiveProfiles("test")
-@Transactional
 class BoxOrderServiceTest {
 
     @Autowired
     BoxOrderService service;
 
-    @Autowired
+    @MockBean
     BoxOrderRepository boxOrderRepository;
-
-    @Autowired
-    ClientRepository clientRepository;
-
-    @Autowired
-    JdbcTemplate jdbcTemplate;
-
-
-    static BoxOrderMapper orderMapper = BoxOrderMapper.INSTANCE;
-    static ClientMapper clientMapper = ClientMapper.INSTANCE;
-
-
-    @BeforeEach
-    public void setUp() {
-        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
-        // client
-        ClientDto client0 = new ClientDto();
-        client0.setId(1L);
-        client0.setEmail("test@test.com");
-        client0.setFullName("Farid Masjedi");
-        client0.setPhoneNumber("09123456789");
-        clientRepository.save(clientMapper.clientDtoToClient(client0));
-        ClientDto client1 = new ClientDto();
-        client1.setId(2L);
-        client1.setEmail("test@test.com");
-        client1.setFullName("Negar Masjedi");
-        client1.setPhoneNumber("09111111111");
-        clientRepository.save(clientMapper.clientDtoToClient(client1));
-        // destination node
-        DestinationNodeDto destinationNodeDto = new DestinationNodeDto();
-        destinationNodeDto.setId(1L);
-        destinationNodeDto.setComment("sample destination comment");
-        destinationNodeDto.setFullName("Neda Masjedi");
-        destinationNodeDto.setAddressBase("sample address base");
-        destinationNodeDto.setPriceRange(PriceRange.UP_TO_ONE);
-        destinationNodeDto.setPhoneNumber("09123456789");
-        destinationNodeDto.setAddressHomeUnit("1");
-        destinationNodeDto.setAddressHouseNumber("1");
-        List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
-        destinationNodeDtoList.add(destinationNodeDto);
-
-        DestinationNodeDto destinationNodeDto1 = new DestinationNodeDto();
-        destinationNodeDto1.setId(2L);
-        destinationNodeDto1.setComment("sample destination comment");
-        destinationNodeDto1.setFullName("Navid Masjedi");
-        destinationNodeDto1.setAddressBase("sample address base");
-        destinationNodeDto1.setPriceRange(PriceRange.UP_TO_ONE);
-        destinationNodeDto1.setPhoneNumber("09123456789");
-        destinationNodeDto1.setAddressHomeUnit("1");
-        destinationNodeDto1.setAddressHouseNumber("1");
-        List<DestinationNodeDto> destinationNodeDtoList1 = new ArrayList<>();
-        destinationNodeDtoList1.add(destinationNodeDto1);
-        // box order
-        BoxOrderDto order0 = new BoxOrderDto();
-        order0.setId(1L);
-        order0.setOwnerId(1L);
-        order0.setOrderType(OrderType.BIKE);
-        order0.setSourceComment("sample source comment");
-        order0.setSourcePhoneNumber("09123456789");
-        order0.setDestinations(destinationNodeDtoList);
-        order0.setSourceFullName("Farid Masjedi");
-        order0.setSourceAddressBase("sample address base");
-        order0.setSourceAddressHomeUnit("1");
-        order0.setSourceAddressHouseNumber("1");
-        boxOrderRepository.save(orderMapper.boxOrderDtoToBoxOrder(order0));
-
-
-        BoxOrderDto order1 = new BoxOrderDto();
-        order1.setId(2L);
-        order1.setOwnerId(2L);
-        order1.setOrderType(OrderType.CAR);
-        order1.setSourceComment("sample source comment");
-        order1.setSourcePhoneNumber("09123456789");
-        order1.setDestinations(destinationNodeDtoList1);
-        order1.setSourceFullName("Neda Masjedi");
-        order1.setSourceAddressBase("sample address base");
-        order1.setSourceAddressHomeUnit("1");
-        order1.setSourceAddressHouseNumber("1");
-        boxOrderRepository.save(orderMapper.boxOrderDtoToBoxOrder(order1));
-
-        BoxOrderDto order2 = new BoxOrderDto();
-        order2.setId(3L);
-        order2.setOwnerId(1L);
-        order2.setOrderType(OrderType.CAR);
-        order2.setSourceComment("sample source comment");
-        order2.setSourcePhoneNumber("09123456789");
-        order2.setDestinations(destinationNodeDtoList);
-        order2.setSourceFullName("Farid Masjedi");
-        order2.setSourceAddressBase("sample address base");
-        order2.setSourceAddressHomeUnit("1");
-        order2.setSourceAddressHouseNumber("1");
-        boxOrderRepository.save(orderMapper.boxOrderDtoToBoxOrder(order2));
-        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
-    }
-
-    @AfterEach
-    public void tearDown() {
-        boxOrderRepository.deleteAll();
-        clientRepository.deleteAll();
-    }
 
     @Test
     void getBoxOrder_ok() {
         // given
         long id = 1L;
+        SourceNode sourceNode = new SourceNode();
+        sourceNode.setAddress(Address.builder()
+                        .base("sample address base")
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .build());
+        sourceNode.setComment("sample source comment");
+        sourceNode.setFullName("Farid Masjedi");
+        sourceNode.setPhoneNumber("09123456789");
+
+        DestinationNode destinationNode = new DestinationNode();
+        destinationNode.setFullName("Neda Masjedi");
+        destinationNode.setComment("sample destination comment");
+        destinationNode.setPhoneNumber("09123456789");
+        destinationNode.setPriceRange(PriceRange.UP_TO_ONE);
+        destinationNode.setAddress(Address.builder()
+                        .base("sample address base")
+                        .houseNumber("1")
+                        .homeUnit("1")
+                        .build());
+
+        List<DestinationNode> destinations = new ArrayList<>();
+        destinations.add(destinationNode);
+
+        given(boxOrderRepository.findById(id)).willReturn(Optional.of(BoxOrder.builder()
+                        .id(id)
+                        .owner(Client.builder().id(id).build())
+                        .orderType(OrderType.BIKE)
+                        .source(sourceNode)
+                        .destinations(destinations)
+                        .build()));
 
         // when
         BoxOrderDto dto = service.getBoxOrder(id);
@@ -166,120 +95,103 @@ class BoxOrderServiceTest {
         //given
         long id = 1;
 
-        //when
-        assertTrue(boxOrderRepository.existsById(id));
-        service.removeBoxOrder(id);
+        given(boxOrderRepository.existsById(id)).willReturn(true);
 
-        //then
-        assertFalse(boxOrderRepository.existsById(id));
+        //when then
+        service.removeBoxOrder(id);
     }
 
     @Test
     void updateBoxOrder_ok() {
         //given
-        String newSourceComment = "new sample comment";
-        long id = 1L;
+        long orderId = 1L;
+        long clientId = 1L;
+        long newClientId = 2L;
+        given(boxOrderRepository.findById(orderId)).willReturn(Optional.of(BoxOrder.builder().id(orderId).
+                owner(Client.builder().id(clientId).build()).build()));
+
+        given(boxOrderRepository.save(any(BoxOrder.class))).willReturn(BoxOrder.builder().id(orderId).
+                owner(Client.builder().id(newClientId).build()).build());
+
+        given(boxOrderRepository.existsById(orderId)).willReturn(true);
 
         //when
-        assertTrue(boxOrderRepository.existsById(id));
-        BoxOrderDto dto = service.getBoxOrder(id);
-        assertNotEquals(newSourceComment, dto.getSourceComment());
-        dto.setSourceComment(newSourceComment);
+        BoxOrderDto dto = service.getBoxOrder(orderId);
+        assertNotEquals(newClientId, dto.getOwnerId());
+        dto.setOwnerId(newClientId);
         dto = service.updateBoxOrder(dto);
 
         //then
-        assertEquals(newSourceComment, dto.getSourceComment());
+        assertEquals(newClientId, dto.getOwnerId());
     }
 
     @Test
     void saveBoxOrder_ok() {
         //given
-        long ownerId = 1;
-        String comment = "new comment";
-        String addressBase = "new address base";
-        String addressHomeUnit = "2";
-        String addressHouseNumber = "2";
-        String phoneNumber = "09123456789";
-        String fullName = "new full name";
-        OrderType orderType = OrderType.CAR;
-        PriceRange priceRange = PriceRange.UP_TO_ONE;
-        List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
-        DestinationNodeDto destinationNodeDto = new DestinationNodeDto();
-        destinationNodeDto.setAddressHouseNumber(addressHouseNumber);
-        destinationNodeDto.setPhoneNumber(phoneNumber);
-        destinationNodeDto.setComment(comment);
-        destinationNodeDto.setPriceRange(priceRange);
-        destinationNodeDto.setAddressHomeUnit(addressHomeUnit);
-        destinationNodeDto.setFullName(fullName);
-        destinationNodeDto.setAddressBase(addressBase);
-        destinationNodeDtoList.add(destinationNodeDto);
-        BoxOrderDto dto = new BoxOrderDto();
-        dto.setOrderType(orderType);
-        dto.setOwnerId(ownerId);
-        dto.setSourcePhoneNumber(phoneNumber);
-        dto.setSourceComment(comment);
-        dto.setSourceAddressBase(addressBase);
-        dto.setSourceAddressHomeUnit(addressHomeUnit);
-        dto.setSourceAddressHouseNumber(addressHouseNumber);
-        dto.setDestinations(destinationNodeDtoList);
-        dto.setOrderType(orderType);
-        dto.setSourceFullName(fullName);
+        long orderId = 1L;
+
+        given(boxOrderRepository.save(any(BoxOrder.class))).willReturn(BoxOrder.builder().id(orderId).build());
+
+        given(boxOrderRepository.existsById(orderId)).willReturn(false);
+
+        BoxOrderDto order0 = new BoxOrderDto();
+        order0.setId(orderId);
 
         //when
-        dto = service.saveBoxOrder(dto);
+        BoxOrderDto dto = service.saveBoxOrder(order0);
 
         //then
-        assertTrue(boxOrderRepository.existsById(dto.getId()));
-        assertEquals(ownerId, dto.getOwnerId());
-        assertEquals(comment, dto.getSourceComment());
-        assertEquals(phoneNumber, dto.getSourcePhoneNumber());
-        assertEquals(fullName, dto.getSourceFullName());
-        assertEquals(fullName, dto.getDestinations().get(0).getFullName());
-        assertEquals(phoneNumber, dto.getDestinations().get(0).getPhoneNumber());
-        assertEquals(addressBase, dto.getSourceAddressBase());
-        assertEquals(addressBase, dto.getDestinations().get(0).getAddressBase());
-        assertEquals(addressHomeUnit, dto.getSourceAddressHomeUnit());
-        assertEquals(addressHomeUnit, dto.getDestinations().get(0).getAddressHomeUnit());
-        assertEquals(addressHouseNumber, dto.getDestinations().get(0).getAddressHouseNumber());
-        assertEquals(addressHouseNumber, dto.getSourceAddressHouseNumber());
-        assertEquals(orderType, dto.getOrderType());
-        assertEquals(priceRange, dto.getDestinations().get(0).getPriceRange());
+        assertEquals(orderId, dto.getId());
     }
 
     @Test
     void exist_ok() {
         //given
         long id = 1;
+        given(boxOrderRepository.existsById(id)).willReturn(true);
 
-        //then
-        assertEquals(boxOrderRepository.existsById(id), service.exist(id));
+        //when then
+        assertTrue(service.exist(id));
     }
 
     @Test
     void getAll_ok() {
+        //given
+        List<BoxOrder> orders = new ArrayList<>();
+        orders.add(BoxOrder.builder().id(1L).build());
+        orders.add(BoxOrder.builder().id(2L).build());
+        given(boxOrderRepository.findAll()).willReturn(orders);
+
         //when
         List<BoxOrderDto> dto = service.getAll();
 
         //then
         assertNotNull(dto);
-        assertEquals(3, dto.size());
+        assertEquals(2, dto.size());
+        assertEquals(1L, dto.get(0).getId());
+        assertEquals(2L, dto.get(1).getId());
     }
 
     @Test
     void searchBoxOrders_ok() {
         //given
         BoxOrderSearchWrapper wrapper = BoxOrderSearchWrapper.builder()
-                .ownerId(1L).build();
+                .orderType(OrderType.BIKE).build();
+
+        List<BoxOrder> orders = new ArrayList<>();
+        orders.add(BoxOrder.builder().id(1L).orderType(OrderType.BIKE).build());
+        orders.add(BoxOrder.builder().id(2L).orderType(OrderType.BIKE).build());
+
+        given(boxOrderRepository.findAll(any(Example.class), any(Pageable.class))).willReturn(
+                new PageImpl(orders)
+        );
 
         //when
         List<BoxOrderDto> page0 = service.searchBoxOrders(wrapper, 0);
-        List<BoxOrderDto> page1 = service.searchBoxOrders(wrapper, 1);
 
         //then
         assertNotNull(page0);
-        assertNotNull(page1);
-        assertEquals(1, page0.get(0).getOwnerId());
-        assertEquals(1, page0.size());
-        assertEquals(1, page1.size());
+        assertEquals(1L, page0.get(0).getId());
+        assertEquals(2L, page0.get(1).getId());
     }
 }

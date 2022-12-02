@@ -17,6 +17,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -34,6 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
+@ActiveProfiles("test")
 class BoxOrderControllerTest {
 
     @Autowired
@@ -88,7 +90,7 @@ class BoxOrderControllerTest {
         destinationNodeDto.setAddressHouseNumber("1");
         List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
         destinationNodeDtoList.add(destinationNodeDto);
-        
+
         BoxOrderDto order0 = new BoxOrderDto();
         order0.setId(1L);
         order0.setOwnerId(1L);
