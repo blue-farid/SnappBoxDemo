@@ -276,8 +276,10 @@ class BoxOrderServiceTest {
         List<BoxOrderDto> page1 = service.searchBoxOrders(wrapper, 1);
 
         //then
+        assertNotNull(page0);
+        assertNotNull(page1);
         assertEquals(1, page0.get(0).getOwnerId());
-        assertEquals(OrderType.CAR, page0.get(0).getOrderType());
-        assertEquals(OrderType.BIKE, page1.get(0).getOrderType());
+        assertEquals(1, page0.size());
+        assertEquals(1, page1.size());
     }
 }
