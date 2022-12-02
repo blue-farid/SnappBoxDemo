@@ -13,6 +13,7 @@ import javax.persistence.*;
 public abstract class Node {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long id;
     @Column
     private String fullName;

@@ -76,7 +76,7 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     public List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper, int page) {
         Pageable pageable = PageRequest.of(page, Integer.parseInt(
                 Objects.requireNonNull(env.getProperty("spring.data.rest.default-page-size")))).
-                withSort(Sort.Direction.DESC, "creationDate");
+                withSort(Sort.Direction.DESC, "lastModifiedDate");
 
         BoxOrder boxOrder = BoxOrder.builder().owner(
                 Client.builder().fullName(wrapper.getOwnerFullName())
