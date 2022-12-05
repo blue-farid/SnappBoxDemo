@@ -3,44 +3,40 @@ package com.snapp.boxdemo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.snapp.boxdemo.mapper.BoxOrderMapper;
-import com.snapp.boxdemo.mapper.ClientMapper;
-import com.snapp.boxdemo.model.dto.BoxOrderDto;
-import com.snapp.boxdemo.model.dto.ClientDto;
-import com.snapp.boxdemo.model.dto.DestinationNodeDto;
-import com.snapp.boxdemo.model.entity.BoxOrder;
-import com.snapp.boxdemo.model.entity.OrderType;
-import com.snapp.boxdemo.model.entity.PriceRange;
+import com.snapp.boxdemo.model.entity.*;
+import com.snapp.boxdemo.model.entity.node.DestinationNode;
+import com.snapp.boxdemo.model.entity.node.SourceNode;
 import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
 import com.snapp.boxdemo.repository.ClientRepository;
+import com.snapp.boxdemo.repository.NodeRepository;
 import com.snapp.boxdemo.service.BoxOrderService;
 import lombok.SneakyThrows;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import javax.annotation.PostConstruct;
+import java.util.*;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
+@ActiveProfiles("test")
 @AutoConfigureMockMvc
+@Transactional
 public class EndToEndTest {
     @Autowired
     MockMvc mockMvc;
@@ -53,14 +49,7 @@ public class EndToEndTest {
 
     Locale locale = Locale.ENGLISH;
 
-    static BoxOrderMapper boxOrderMapper = BoxOrderMapper.INSTANCE;
-
-    static ClientMapper clientMapper = ClientMapper.INSTANCE;
-
     static BoxOrderMapper orderMapper = BoxOrderMapper.INSTANCE;
-
-    @Autowired
-    JdbcTemplate jdbcTemplate;
 
     @Autowired
     ClientRepository clientRepository;
@@ -68,103 +57,62 @@ public class EndToEndTest {
     @Autowired
     BoxOrderRepository boxOrderRepository;
 
-    @BeforeEach
-    public void setUp() {
-        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY FALSE");
-        // client
-        ClientDto client0 = new ClientDto();
-        client0.setId(1L);
-        client0.setEmail("test@test.com");
-        client0.setFullName("Farid Masjedi");
-        client0.setPhoneNumber("09123456789");
-        clientRepository.save(clientMapper.clientDtoToClient(client0));
-        ClientDto client1 = new ClientDto();
-        client1.setId(2L);
-        client1.setEmail("test@test.com");
-        client1.setFullName("Negar Masjedi");
-        client1.setPhoneNumber("09111111111");
-        clientRepository.save(clientMapper.clientDtoToClient(client1));
-        // destination node
-        DestinationNodeDto destinationNodeDto = new DestinationNodeDto();
-        destinationNodeDto.setId(1L);
-        destinationNodeDto.setComment("sample destination comment");
-        destinationNodeDto.setFullName("Neda Masjedi");
-        destinationNodeDto.setAddressBase("sample address base");
-        destinationNodeDto.setPriceRange(PriceRange.UP_TO_ONE);
-        destinationNodeDto.setPhoneNumber("09123456789");
-        destinationNodeDto.setAddressHomeUnit("1");
-        destinationNodeDto.setAddressHouseNumber("1");
-        List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
-        destinationNodeDtoList.add(destinationNodeDto);
+    @Autowired
+    NodeRepository nodeRepository;
 
-        DestinationNodeDto destinationNodeDto1 = new DestinationNodeDto();
-        destinationNodeDto1.setId(2L);
-        destinationNodeDto1.setComment("sample destination comment");
-        destinationNodeDto1.setFullName("Navid Masjedi");
-        destinationNodeDto1.setAddressBase("sample address base");
-        destinationNodeDto1.setPriceRange(PriceRange.UP_TO_ONE);
-        destinationNodeDto1.setPhoneNumber("09123456789");
-        destinationNodeDto1.setAddressHomeUnit("1");
-        destinationNodeDto1.setAddressHouseNumber("1");
-        List<DestinationNodeDto> destinationNodeDtoList1 = new ArrayList<>();
-        destinationNodeDtoList1.add(destinationNodeDto1);
-        // box order
-        BoxOrderDto order0 = new BoxOrderDto();
-        order0.setId(1L);
-        order0.setOwnerId(1L);
-        order0.setOrderType(OrderType.BIKE);
-        order0.setSourceComment("sample source comment");
-        order0.setSourcePhoneNumber("09123456789");
-        order0.setDestinations(destinationNodeDtoList);
-        order0.setSourceFullName("Farid Masjedi");
-        order0.setSourceAddressBase("sample address base");
-        order0.setSourceAddressHomeUnit("1");
-        order0.setSourceAddressHouseNumber("1");
-        boxOrderRepository.save(orderMapper.boxOrderDtoToBoxOrder(order0));
+    long ownerId;
 
-
-        BoxOrderDto order1 = new BoxOrderDto();
-        order1.setId(2L);
-        order1.setOwnerId(2L);
-        order1.setOrderType(OrderType.CAR);
-        order1.setSourceComment("sample source comment");
-        order1.setSourcePhoneNumber("09123456789");
-        order1.setDestinations(destinationNodeDtoList1);
-        order1.setSourceFullName("Neda Masjedi");
-        order1.setSourceAddressBase("sample address base");
-        order1.setSourceAddressHomeUnit("1");
-        order1.setSourceAddressHouseNumber("1");
-        boxOrderRepository.save(orderMapper.boxOrderDtoToBoxOrder(order1));
-
-        BoxOrderDto order2 = new BoxOrderDto();
-        order2.setId(3L);
-        order2.setOwnerId(1L);
-        order2.setOrderType(OrderType.CAR);
-        order2.setSourceComment("sample source comment");
-        order2.setSourcePhoneNumber("09123456789");
-        order2.setDestinations(destinationNodeDtoList);
-        order2.setSourceFullName("Farid Masjedi");
-        order2.setSourceAddressBase("sample address base");
-        order2.setSourceAddressHomeUnit("1");
-        order2.setSourceAddressHouseNumber("1");
-        boxOrderRepository.save(orderMapper.boxOrderDtoToBoxOrder(order2));
-        jdbcTemplate.execute("SET REFERENTIAL_INTEGRITY TRUE");
-    }
-
-    @AfterEach
-    public void tearDown() {
-        boxOrderRepository.deleteAll();
-        clientRepository.deleteAll();
+    @PostConstruct
+    void setUp() {
+        ownerId = clientRepository.save(Client.builder()
+                .fullName("Farid Masjedi")
+                .phoneNumber("09123456789")
+                .email("test@test.com")
+                .id(1L)
+                .build()).getId();
     }
 
     @Test
     @SneakyThrows
-    void getBoxOrder_ok() {
+    void givenBoxOrderId_whenGetBoxOrderById_thenReturnBoxOrderObject() {
+        // given
+        List<DestinationNode> destinationNodes = new ArrayList<>();
+        destinationNodes.add(DestinationNode.builder()
+                .address(Address.builder()
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .base("destination address")
+                        .build())
+                .priceRange(PriceRange.UP_TO_ONE)
+                .comment("destination comment")
+                .phoneNumber("09123456789")
+                .fullName("destination full name")
+                .build());
+
+        BoxOrder boxOrder = BoxOrder.builder()
+                .orderType(OrderType.BIKE)
+                .source(SourceNode.builder()
+                        .fullName("test source full name")
+                        .phoneNumber("09123456789")
+                        .comment("test source comment")
+                        .address(Address.builder()
+                                .base("test source base")
+                                .houseNumber("1")
+                                .homeUnit("1")
+                                .build())
+                        .build())
+                .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .destinations(destinationNodes)
+                .build();
+
+        long id = boxOrderRepository.save(boxOrder).getId();
+
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host("localhost")
                 .port(8080)
-                .path("/api/order/1")
+                .path("/api/order/{id}")
+                .uriVariables(Map.of("id", id))
                 .build();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -175,36 +123,56 @@ public class EndToEndTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("get.success", null, locale)))
-                .andExpect(jsonPath("$.result.id").value(1L));
+                .andExpect(jsonPath("$.result.id").value(id))
+                .andExpect(jsonPath("$.result.orderType").value("BIKE"))
+                .andExpect(jsonPath("$.result.sourceFullName").value("test source full name"))
+                .andExpect(jsonPath("$.result.sourcePhoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result.sourceComment").value("test source comment"))
+                .andExpect(jsonPath("$.result.sourceAddressBase").value("test source base"))
+                .andExpect(jsonPath("$.result.sourceAddressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result.sourceAddressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].fullName").value("destination full name"))
+                .andExpect(jsonPath("$.result.destinations[0].phoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result.destinations[0].comment").value("destination comment"))
+                .andExpect(jsonPath("$.result.destinations[0].addressBase").value("destination address"))
+                .andExpect(jsonPath("$.result.destinations[0].addressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].addressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].priceRange").value("UP_TO_ONE"))
+                .andExpect(jsonPath("$.result.ownerId").value(ownerId));
     }
 
     @Test
     @SneakyThrows
-    void postBoxOrder_ok() {
+    void givenBoxOrderObject_whenCreateBoxOrder_thenReturnSavedBoxOrder() {
         // given
-        DestinationNodeDto destinationNodeDto = new DestinationNodeDto();
-        destinationNodeDto.setId(4L);
-        destinationNodeDto.setComment("sample destination comment");
-        destinationNodeDto.setFullName("Neda Masjedi");
-        destinationNodeDto.setAddressBase("sample address base");
-        destinationNodeDto.setPriceRange(PriceRange.UP_TO_ONE);
-        destinationNodeDto.setPhoneNumber("09123456789");
-        destinationNodeDto.setAddressHomeUnit("1");
-        destinationNodeDto.setAddressHouseNumber("1");
-        List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
-        destinationNodeDtoList.add(destinationNodeDto);
+        List<DestinationNode> destinationNodes = new ArrayList<>();
+        destinationNodes.add(DestinationNode.builder()
+                .address(Address.builder()
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .base("destination address")
+                        .build())
+                .priceRange(PriceRange.UP_TO_ONE)
+                .comment("destination comment")
+                .phoneNumber("09123456789")
+                .fullName("destination full name")
+                .build());
 
-        BoxOrderDto order0 = new BoxOrderDto();
-        order0.setId(4L);
-        order0.setOwnerId(1L);
-        order0.setOrderType(OrderType.BIKE);
-        order0.setSourceComment("sample source comment");
-        order0.setSourcePhoneNumber("09123456789");
-        order0.setDestinations(destinationNodeDtoList);
-        order0.setSourceFullName("Farid Masjedi");
-        order0.setSourceAddressBase("sample address base");
-        order0.setSourceAddressHomeUnit("1");
-        order0.setSourceAddressHouseNumber("1");
+        BoxOrder boxOrder = BoxOrder.builder()
+                .orderType(OrderType.BIKE)
+                .source(SourceNode.builder()
+                        .fullName("test source full name")
+                        .phoneNumber("09123456789")
+                        .comment("test source comment")
+                        .address(Address.builder()
+                                .base("test source base")
+                                .houseNumber("1")
+                                .homeUnit("1")
+                                .build())
+                        .build())
+                .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .destinations(destinationNodes)
+                .build();
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
@@ -214,7 +182,7 @@ public class EndToEndTest {
                 .build();
 
         ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(order0);
+        String json = writer.writeValueAsString(orderMapper.boxOrderToBoxOrderDto(boxOrder));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(uriComponents.toUriString())
@@ -226,39 +194,59 @@ public class EndToEndTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("save.success", null, locale)))
-                .andExpect(jsonPath("$.result.id").value(4L));
+                .andExpect(jsonPath("$.result.orderType").value("BIKE"))
+                .andExpect(jsonPath("$.result.sourceFullName").value("test source full name"))
+                .andExpect(jsonPath("$.result.sourcePhoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result.sourceComment").value("test source comment"))
+                .andExpect(jsonPath("$.result.sourceAddressBase").value("test source base"))
+                .andExpect(jsonPath("$.result.sourceAddressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result.sourceAddressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].fullName").value("destination full name"))
+                .andExpect(jsonPath("$.result.destinations[0].phoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result.destinations[0].comment").value("destination comment"))
+                .andExpect(jsonPath("$.result.destinations[0].addressBase").value("destination address"))
+                .andExpect(jsonPath("$.result.destinations[0].addressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].addressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].priceRange").value("UP_TO_ONE"))
+                .andExpect(jsonPath("$.result.ownerId").value(ownerId));
     }
 
     @Test
     @SneakyThrows
-    void putBoxOrder_ok() {
+    void givenBoxOrderObject_whenCreateBoxOrder_returnUpdatedBoxOrder() {
         // given
-        DestinationNodeDto destinationNodeDto = new DestinationNodeDto();
-        destinationNodeDto.setId(1L);
-        destinationNodeDto.setComment("sample destination comment");
-        destinationNodeDto.setFullName("Neda Masjedi");
-        destinationNodeDto.setAddressBase("sample address base");
-        destinationNodeDto.setPriceRange(PriceRange.UP_TO_ONE);
-        destinationNodeDto.setPhoneNumber("09123456789");
-        destinationNodeDto.setAddressHomeUnit("1");
-        destinationNodeDto.setAddressHouseNumber("1");
-        List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
-        destinationNodeDtoList.add(destinationNodeDto);
+        List<DestinationNode> destinationNodes = new ArrayList<>();
+        destinationNodes.add(DestinationNode.builder()
+                .address(Address.builder()
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .base("destination address")
+                        .build())
+                .priceRange(PriceRange.UP_TO_ONE)
+                .comment("destination comment")
+                .phoneNumber("09123456789")
+                .fullName("destination full name")
+                .build());
 
-        BoxOrderDto order0 = new BoxOrderDto();
-        order0.setId(1L);
-        order0.setOwnerId(1L);
-        order0.setOrderType(OrderType.BIKE);
-        order0.setSourceComment("sample source comment");
-        order0.setSourcePhoneNumber("09123456789");
-        order0.setDestinations(destinationNodeDtoList);
-        order0.setSourceFullName("Farid Masjedi");
-        order0.setSourceAddressBase("sample address base");
-        order0.setSourceAddressHomeUnit("1");
-        order0.setSourceAddressHouseNumber("1");
+        BoxOrder boxOrder = BoxOrder.builder()
+                .orderType(OrderType.BIKE)
+                .source(SourceNode.builder()
+                        .fullName("test source full name")
+                        .phoneNumber("09123456789")
+                        .comment("test source comment")
+                        .address(Address.builder()
+                                .base("test source base")
+                                .houseNumber("1")
+                                .homeUnit("1")
+                                .build())
+                        .build())
+                .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .destinations(destinationNodes)
+                .build();
 
-        given(boxOrderService.updateBoxOrder(any(BoxOrderDto.class))).willReturn(boxOrderMapper.boxOrderToBoxOrderDto(BoxOrder.builder()
-                .id(order0.getId()).build()));
+        boxOrder = boxOrderRepository.save(boxOrder);
+
+        boxOrder.setOrderType(OrderType.CAR);
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
@@ -268,7 +256,7 @@ public class EndToEndTest {
                 .build();
 
         ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(order0);
+        String json = writer.writeValueAsString(orderMapper.boxOrderToBoxOrderDto(boxOrder));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(uriComponents.toUriString())
@@ -280,17 +268,64 @@ public class EndToEndTest {
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("update.success", null, locale)))
-                .andExpect(jsonPath("$.result.id").value(1L));
+                .andExpect(jsonPath("$.result.orderType").value("CAR"))
+                .andExpect(jsonPath("$.result.sourceFullName").value("test source full name"))
+                .andExpect(jsonPath("$.result.sourcePhoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result.sourceComment").value("test source comment"))
+                .andExpect(jsonPath("$.result.sourceAddressBase").value("test source base"))
+                .andExpect(jsonPath("$.result.sourceAddressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result.sourceAddressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].fullName").value("destination full name"))
+                .andExpect(jsonPath("$.result.destinations[0].phoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result.destinations[0].comment").value("destination comment"))
+                .andExpect(jsonPath("$.result.destinations[0].addressBase").value("destination address"))
+                .andExpect(jsonPath("$.result.destinations[0].addressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].addressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result.destinations[0].priceRange").value("UP_TO_ONE"))
+                .andExpect(jsonPath("$.result.ownerId").value(ownerId));
     }
 
     @Test
     @SneakyThrows
-    void deleteBoxOrder_ok() {
+    void givenBoxOrderId_whenCreateBoxOrder_thenReturnRemoveSuccess() {
+        // given
+        List<DestinationNode> destinationNodes = new ArrayList<>();
+        destinationNodes.add(DestinationNode.builder()
+                .address(Address.builder()
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .base("destination address")
+                        .build())
+                .priceRange(PriceRange.UP_TO_ONE)
+                .comment("destination comment")
+                .phoneNumber("09123456789")
+                .fullName("destination full name")
+                .build());
+
+        BoxOrder boxOrder = BoxOrder.builder()
+                .orderType(OrderType.BIKE)
+                .source(SourceNode.builder()
+                        .fullName("test source full name")
+                        .phoneNumber("09123456789")
+                        .comment("test source comment")
+                        .address(Address.builder()
+                                .base("test source base")
+                                .houseNumber("1")
+                                .homeUnit("1")
+                                .build())
+                        .build())
+                .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .destinations(destinationNodes)
+                .build();
+
+        long id = boxOrderRepository.save(boxOrder).getId();
+
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
                 .host("localhost")
                 .port(8080)
-                .path("/api/order/1")
+                .path("/api/order/{id}")
+                .uriVariables(Map.of("id", id))
                 .build();
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
@@ -302,17 +337,78 @@ public class EndToEndTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("remove.success", null, locale)))
                 .andExpect(jsonPath("$.result").isEmpty());
+
+        assertFalse(boxOrderRepository.existsById(1L));
     }
 
     @Test
     @SneakyThrows
-    void searchBoxOrder_ok() {
+    void givenBoxOrderSearchParameters_whenCreateBoxOrder_thenReturnBoxOrder() {
         // given
+        List<DestinationNode> destinationNodes = new ArrayList<>();
+        destinationNodes.add(DestinationNode.builder()
+                .address(Address.builder()
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .base("destination address")
+                        .build())
+                .priceRange(PriceRange.UP_TO_ONE)
+                .comment("destination comment")
+                .phoneNumber("09123456789")
+                .fullName("destination full name")
+                .build());
+
+        BoxOrder boxOrder = BoxOrder.builder()
+                .orderType(OrderType.BIKE)
+                .source(SourceNode.builder()
+                        .fullName("test source full name")
+                        .phoneNumber("09123456789")
+                        .comment("test source comment")
+                        .address(Address.builder()
+                                .base("test source base")
+                                .houseNumber("1")
+                                .homeUnit("1")
+                                .build())
+                        .build())
+                .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .destinations(destinationNodes)
+                .build();
+
+        List<DestinationNode> destinationNodes1 = new ArrayList<>();
+        destinationNodes1.add(DestinationNode.builder()
+                .address(Address.builder()
+                        .homeUnit("1")
+                        .houseNumber("1")
+                        .base("destination address")
+                        .build())
+                .priceRange(PriceRange.UP_TO_ONE)
+                .comment("destination comment")
+                .phoneNumber("09123456789")
+                .fullName("destination full name")
+                .build());
+
+        BoxOrder boxOrder1 = BoxOrder.builder()
+                .orderType(OrderType.CAR)
+                .source(SourceNode.builder()
+                        .fullName("test source full name")
+                        .phoneNumber("09123456789")
+                        .comment("test source comment")
+                        .address(Address.builder()
+                                .base("test source base")
+                                .houseNumber("1")
+                                .homeUnit("1")
+                                .build())
+                        .build())
+                .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .destinations(destinationNodes1)
+                .build();
+
+        long id = boxOrderRepository.save(boxOrder).getId();
+        boxOrderRepository.save(boxOrder1);
+
         BoxOrderSearchWrapper wrapper = BoxOrderSearchWrapper.builder()
                 .ownerId(1L)
                 .orderType(OrderType.BIKE).build();
-
-        given(boxOrderService.searchBoxOrders(wrapper, 0)).willReturn(new ArrayList<>());
 
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
                 .scheme("http")
@@ -324,14 +420,31 @@ public class EndToEndTest {
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .get(uriComponents.toUriString())
                 .accept(MediaType.APPLICATION_JSON)
-                .queryParam("ownerId", "1")
-                .queryParam("orderType", "BIKE")
+                .queryParam("ownerId", wrapper.getOwnerId().toString())
+                .queryParam("orderType", wrapper.getOrderType().toString())
                 .queryParam("page", "0");
 
         // when then
         mockMvc.perform(requestBuilder)
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.message").value(messageSource.getMessage("search.success", null, locale)))
-                .andExpect(jsonPath("$.result").isArray());
+                .andExpect(jsonPath("$.result").isArray())
+                .andExpect(jsonPath("$.result[0].id").value(id))
+                .andExpect(jsonPath("$.result[0].orderType").value("BIKE"))
+                .andExpect(jsonPath("$.result[0].sourceFullName").value("test source full name"))
+                .andExpect(jsonPath("$.result[0].sourcePhoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result[0].sourceComment").value("test source comment"))
+                .andExpect(jsonPath("$.result[0].sourceAddressBase").value("test source base"))
+                .andExpect(jsonPath("$.result[0].sourceAddressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result[0].sourceAddressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result[0].destinations").isArray())
+                .andExpect(jsonPath("$.result[0].destinations[0].fullName").value("destination full name"))
+                .andExpect(jsonPath("$.result[0].destinations[0].phoneNumber").value("09123456789"))
+                .andExpect(jsonPath("$.result[0].destinations[0].comment").value("destination comment"))
+                .andExpect(jsonPath("$.result[0].destinations[0].priceRange").value("UP_TO_ONE"))
+                .andExpect(jsonPath("$.result[0].destinations[0].addressBase").value("destination address"))
+                .andExpect(jsonPath("$.result[0].destinations[0].addressHouseNumber").value("1"))
+                .andExpect(jsonPath("$.result[0].destinations[0].addressHomeUnit").value("1"))
+                .andExpect(jsonPath("$.result[0].ownerId").value(ownerId));
     }
 }

@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class BoxOrder {
     @JoinColumn(name = "source_node_id")
     private SourceNode source;
     @OneToMany(mappedBy = "boxOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private List<DestinationNode> destinations;
+    private List<DestinationNode> destinations = new ArrayList<>();
     @Column
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
