@@ -28,6 +28,10 @@ public abstract class Node {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
+    @Column(nullable = false)
+    private Double x;
+    @Column(nullable = false)
+    private Double y;
     @Column
     private String comment;
 }

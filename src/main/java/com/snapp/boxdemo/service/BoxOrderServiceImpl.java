@@ -27,6 +27,8 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     private final BoxOrderMapper mapper = BoxOrderMapper.INSTANCE;
     private final BoxOrderRepository repository;
 
+    private final PricingService pricingService;
+
     private final MessageSource source;
 
     private final Environment env;
@@ -57,7 +59,9 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     public BoxOrderDto saveBoxOrder(BoxOrderDto dto) {
         if (!Objects.isNull(dto.getId()) && repository.existsById(dto.getId()))
             throw new DuplicateEntityException(source.getMessage("error.duplicate", null, Locale.ENGLISH));
+
         BoxOrder order = mapper.boxOrderDtoToBoxOrder(dto);
+        order.setPrice(pricingService.callPriceService(order.getSource(), order.getDestinations()));
         BoxOrder result = repository.save(order);
         return mapper.boxOrderToBoxOrderDto(result);
     }
