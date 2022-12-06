@@ -33,6 +33,8 @@ public class BoxOrder {
     @Column
     @Enumerated(EnumType.STRING)
     private OrderType orderType;
+    @Column(nullable = false)
+    private Long price;
     @CreationTimestamp
     @Column
     private Date creationDate;
