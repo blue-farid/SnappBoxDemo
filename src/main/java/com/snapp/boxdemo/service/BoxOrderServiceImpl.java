@@ -9,8 +9,8 @@ import com.snapp.boxdemo.model.entity.Client;
 import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.repository.BoxOrderRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,7 +31,8 @@ public class BoxOrderServiceImpl implements BoxOrderService {
 
     private final MessageSource source;
 
-    private final Environment env;
+    @Value("spring.data.rest.default-page-size")
+    private String defaultPageSize;
 
     @Override
     public BoxOrderDto getBoxOrder(long id) {
@@ -79,7 +80,7 @@ public class BoxOrderServiceImpl implements BoxOrderService {
     @Override
     public List<BoxOrderDto> searchBoxOrders(BoxOrderSearchWrapper wrapper, int page) {
         Pageable pageable = PageRequest.of(page, Integer.parseInt(
-                Objects.requireNonNull(env.getProperty("spring.data.rest.default-page-size")))).
+                defaultPageSize)).
                 withSort(Sort.Direction.DESC, "lastModifiedDate");
 
         BoxOrder boxOrder = BoxOrder.builder().owner(
