@@ -1,30 +1,36 @@
 package com.snapp.boxdemo.service;
 
 import com.snapp.boxdemo.model.dto.BaseResponseDto;
-import com.snapp.boxdemo.model.dto.BoxPriceResponseDto;
 import com.snapp.boxdemo.model.entity.node.DestinationNode;
 import com.snapp.boxdemo.model.entity.node.SourceNode;
-import lombok.AllArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.LinkedHashMap;
 import java.util.List;
 
 @Service
-@AllArgsConstructor
 public class PricingServiceImpl implements PricingService {
 
     private final RestTemplate restTemplate = new RestTemplate();
 
+    @Value("${price.service.port}")
+    private String priceServicePort;
+    @Value("${price.service.host}")
+    private String priceServiceHost;
+
+    @Value("${price.service.scheme}")
+    private String priceScheme;
+
     @Override
     public Double callPriceService(SourceNode sourceNode, List<DestinationNode> destinationNodes) {
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .scheme("http")
-                .host("localhost")
-                .port(8080)
+                .scheme(priceScheme)
+                .host(priceServiceHost)
+                .port(priceServicePort)
                 .path("/price/box")
                 .queryParam("sourceX", sourceNode.getX())
                 .queryParam("sourceY", sourceNode.getY())
@@ -32,8 +38,7 @@ public class PricingServiceImpl implements PricingService {
                 .queryParam("destinationY", destinationNodes.stream().map(DestinationNode::getY).toArray())
         .build();
 
-        ResponseEntity<BaseResponseDto> response = restTemplate.getForEntity(uriComponents.toUri(), BaseResponseDto.class);
-        BoxPriceResponseDto dto = (BoxPriceResponseDto) response.getBody().getResult();
-        return Double.parseDouble(dto.getPriceAmount());
+        LinkedHashMap<String, String> response = (LinkedHashMap<String, String>) restTemplate.getForObject(uriComponents.toUri(), BaseResponseDto.class).getResult();
+        return Double.parseDouble(response.get("priceAmount"));
     }
 }
