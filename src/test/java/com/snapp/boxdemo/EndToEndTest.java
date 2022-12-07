@@ -11,11 +11,13 @@ import com.snapp.boxdemo.repository.BoxOrderRepository;
 import com.snapp.boxdemo.repository.ClientRepository;
 import com.snapp.boxdemo.repository.NodeRepository;
 import com.snapp.boxdemo.service.BoxOrderService;
+import com.snapp.boxdemo.service.PricingService;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -30,6 +32,8 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -60,6 +64,9 @@ public class EndToEndTest {
     @Autowired
     NodeRepository nodeRepository;
 
+    @MockBean
+    PricingService pricingService;
+
     long ownerId;
 
     @PostConstruct
@@ -87,6 +94,8 @@ public class EndToEndTest {
                 .comment("destination comment")
                 .phoneNumber("09123456789")
                 .fullName("destination full name")
+                .x(2.0)
+                .y(2.0)
                 .build());
 
         BoxOrder boxOrder = BoxOrder.builder()
@@ -100,9 +109,12 @@ public class EndToEndTest {
                                 .houseNumber("1")
                                 .homeUnit("1")
                                 .build())
+                        .x(1.0)
+                        .y(1.0)
                         .build())
                 .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
                 .destinations(destinationNodes)
+                .price(40000.0)
                 .build();
 
         long id = boxOrderRepository.save(boxOrder).getId();
@@ -138,13 +150,16 @@ public class EndToEndTest {
                 .andExpect(jsonPath("$.result.destinations[0].addressHouseNumber").value("1"))
                 .andExpect(jsonPath("$.result.destinations[0].addressHomeUnit").value("1"))
                 .andExpect(jsonPath("$.result.destinations[0].priceRange").value("UP_TO_ONE"))
-                .andExpect(jsonPath("$.result.ownerId").value(ownerId));
+                .andExpect(jsonPath("$.result.ownerId").value(ownerId))
+                .andExpect(jsonPath("$.result.price").value(40000.0));
     }
 
     @Test
     @SneakyThrows
     void givenBoxOrderObject_whenCreateBoxOrder_thenReturnSavedBoxOrder() {
         // given
+        given(pricingService.callPriceService(any(SourceNode.class), any(List.class))).willReturn(40000.0);
+
         List<DestinationNode> destinationNodes = new ArrayList<>();
         destinationNodes.add(DestinationNode.builder()
                 .address(Address.builder()
@@ -156,6 +171,8 @@ public class EndToEndTest {
                 .comment("destination comment")
                 .phoneNumber("09123456789")
                 .fullName("destination full name")
+                .x(2.0)
+                .y(2.0)
                 .build());
 
         BoxOrder boxOrder = BoxOrder.builder()
@@ -169,6 +186,8 @@ public class EndToEndTest {
                                 .houseNumber("1")
                                 .homeUnit("1")
                                 .build())
+                        .x(1.0)
+                        .y(1.0)
                         .build())
                 .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
                 .destinations(destinationNodes)
@@ -208,7 +227,8 @@ public class EndToEndTest {
                 .andExpect(jsonPath("$.result.destinations[0].addressHouseNumber").value("1"))
                 .andExpect(jsonPath("$.result.destinations[0].addressHomeUnit").value("1"))
                 .andExpect(jsonPath("$.result.destinations[0].priceRange").value("UP_TO_ONE"))
-                .andExpect(jsonPath("$.result.ownerId").value(ownerId));
+                .andExpect(jsonPath("$.result.ownerId").value(ownerId))
+                .andExpect(jsonPath("$.result.price").value(40000.0));
     }
 
     @Test
@@ -216,6 +236,7 @@ public class EndToEndTest {
     void givenBoxOrderObject_whenCreateBoxOrder_returnUpdatedBoxOrder() {
         // given
         List<DestinationNode> destinationNodes = new ArrayList<>();
+        given(pricingService.callPriceService(any(SourceNode.class), any(List.class))).willReturn(40000.0);
         destinationNodes.add(DestinationNode.builder()
                 .address(Address.builder()
                         .homeUnit("1")
@@ -226,6 +247,8 @@ public class EndToEndTest {
                 .comment("destination comment")
                 .phoneNumber("09123456789")
                 .fullName("destination full name")
+                .y(2.0)
+                .x(2.0)
                 .build());
 
         BoxOrder boxOrder = BoxOrder.builder()
@@ -239,9 +262,12 @@ public class EndToEndTest {
                                 .houseNumber("1")
                                 .homeUnit("1")
                                 .build())
+                        .y(1.0)
+                        .x(1.0)
                         .build())
                 .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
                 .destinations(destinationNodes)
+                .price(40000.0)
                 .build();
 
         boxOrder = boxOrderRepository.save(boxOrder);
@@ -282,7 +308,8 @@ public class EndToEndTest {
                 .andExpect(jsonPath("$.result.destinations[0].addressHouseNumber").value("1"))
                 .andExpect(jsonPath("$.result.destinations[0].addressHomeUnit").value("1"))
                 .andExpect(jsonPath("$.result.destinations[0].priceRange").value("UP_TO_ONE"))
-                .andExpect(jsonPath("$.result.ownerId").value(ownerId));
+                .andExpect(jsonPath("$.result.ownerId").value(ownerId))
+                .andExpect(jsonPath("$.result.price").value(40000.0));
     }
 
     @Test
@@ -300,6 +327,8 @@ public class EndToEndTest {
                 .comment("destination comment")
                 .phoneNumber("09123456789")
                 .fullName("destination full name")
+                .y(2.0)
+                .x(2.0)
                 .build());
 
         BoxOrder boxOrder = BoxOrder.builder()
@@ -313,9 +342,12 @@ public class EndToEndTest {
                                 .houseNumber("1")
                                 .homeUnit("1")
                                 .build())
+                        .y(1.0)
+                        .x(1.0)
                         .build())
                 .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
                 .destinations(destinationNodes)
+                .price(40000.0)
                 .build();
 
         long id = boxOrderRepository.save(boxOrder).getId();
@@ -356,6 +388,8 @@ public class EndToEndTest {
                 .comment("destination comment")
                 .phoneNumber("09123456789")
                 .fullName("destination full name")
+                .x(2.0)
+                .y(2.0)
                 .build());
 
         BoxOrder boxOrder = BoxOrder.builder()
@@ -369,9 +403,12 @@ public class EndToEndTest {
                                 .houseNumber("1")
                                 .homeUnit("1")
                                 .build())
+                        .x(1.0)
+                        .y(1.0)
                         .build())
                 .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
                 .destinations(destinationNodes)
+                .price(40000.0)
                 .build();
 
         List<DestinationNode> destinationNodes1 = new ArrayList<>();
@@ -385,6 +422,8 @@ public class EndToEndTest {
                 .comment("destination comment")
                 .phoneNumber("09123456789")
                 .fullName("destination full name")
+                .x(2.0)
+                .y(2.0)
                 .build());
 
         BoxOrder boxOrder1 = BoxOrder.builder()
@@ -398,8 +437,11 @@ public class EndToEndTest {
                                 .houseNumber("1")
                                 .homeUnit("1")
                                 .build())
+                        .x(1.0)
+                        .y(1.0)
                         .build())
                 .owner(Objects.requireNonNull(clientRepository.findById(1L).get()))
+                .price(40000.0)
                 .destinations(destinationNodes1)
                 .build();
 
@@ -445,6 +487,7 @@ public class EndToEndTest {
                 .andExpect(jsonPath("$.result[0].destinations[0].addressBase").value("destination address"))
                 .andExpect(jsonPath("$.result[0].destinations[0].addressHouseNumber").value("1"))
                 .andExpect(jsonPath("$.result[0].destinations[0].addressHomeUnit").value("1"))
-                .andExpect(jsonPath("$.result[0].ownerId").value(ownerId));
+                .andExpect(jsonPath("$.result[0].ownerId").value(ownerId))
+                .andExpect(jsonPath("$.result[0].price").value(40000.0));
     }
 }

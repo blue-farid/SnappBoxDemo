@@ -19,6 +19,8 @@ public interface BoxOrderMapper {
     @Mapping(target = "sourceAddressHouseNumber", source = "source.address.houseNumber")
     @Mapping(target = "sourceComment", source = "source.comment")
     @Mapping(target = "sourceFullName", source = "source.fullName")
+    @Mapping(target = "sourceX", source = "source.x")
+    @Mapping(target = "sourceY", source = "source.y")
     BoxOrderDto boxOrderToBoxOrderDto(BoxOrder order);
 
     @Mapping(source = "ownerId", target = "owner.id")
@@ -28,6 +30,8 @@ public interface BoxOrderMapper {
     @Mapping(source = "sourceAddressHouseNumber", target = "source.address.houseNumber")
     @Mapping(source = "sourceComment", target = "source.comment")
     @Mapping(source = "sourceFullName", target = "source.fullName")
+    @Mapping(source = "sourceX", target = "source.x")
+    @Mapping(source = "sourceY", target = "source.y")
     BoxOrder boxOrderDtoToBoxOrder(BoxOrderDto dto);
 
     @Mapping(target = "address.base", source = "addressBase")

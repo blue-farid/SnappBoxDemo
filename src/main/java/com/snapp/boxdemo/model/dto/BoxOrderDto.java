@@ -33,6 +33,11 @@ public class BoxOrderDto implements Serializable {
     private String sourceAddressHomeUnit;
     @Size(max = 1000, message = "{error.valid}")
     private String sourceComment;
+    @NotNull(message = "{error.valid.empty}")
+    private Double sourceX;
+    @NotNull(message = "{error.valid.empty}")
+    private Double sourceY;
+    private Double price;
     @Valid
     private List<DestinationNodeDto> destinations;
     private OrderType orderType;

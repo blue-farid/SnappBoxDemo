@@ -33,6 +33,9 @@ class BoxOrderServiceTest {
     @MockBean
     BoxOrderRepository boxOrderRepository;
 
+    @MockBean
+    PricingService pricingService;
+
     @Test
     void getBoxOrder_ok() {
         // given
@@ -133,6 +136,8 @@ class BoxOrderServiceTest {
         given(boxOrderRepository.save(any(BoxOrder.class))).willReturn(BoxOrder.builder().id(orderId).build());
 
         given(boxOrderRepository.existsById(orderId)).willReturn(false);
+
+        given(pricingService.callPriceService(any(SourceNode.class), any(List.class))).willReturn(40000D);
 
         BoxOrderDto order0 = new BoxOrderDto();
         order0.setId(orderId);

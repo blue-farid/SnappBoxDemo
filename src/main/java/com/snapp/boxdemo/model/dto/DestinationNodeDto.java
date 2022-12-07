@@ -4,6 +4,7 @@ import com.snapp.boxdemo.model.entity.PriceRange;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
@@ -28,4 +29,8 @@ public class DestinationNodeDto implements Serializable {
     @Size(max = 1000, message = "{error.valid.length}")
     private String comment;
     private PriceRange priceRange;
+    @NotNull(message = "{error.valid.empty}")
+    private Double x;
+    @NotNull(message = "{error.valid.empty}")
+    private Double y;
 }

@@ -17,7 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class PricingServiceImpl implements PricingService {
 
-    private final RestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
 
     @Override
     public Double callPriceService(SourceNode sourceNode, List<DestinationNode> destinationNodes) {
