@@ -1,0 +1,10 @@
+version: '2'
+services:
+    box-demo:
+        image: box-demo:latest
+        ports:
+            - 8080:8080
+    snapp-price:
+        image: snapp-price:latest
+        ports:
+            - 8081:8081

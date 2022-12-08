@@ -31,7 +31,7 @@ public class BoxOrderServiceImpl implements BoxOrderService {
 
     private final MessageSource source;
 
-    @Value("spring.data.rest.default-page-size")
+    @Value("${spring.data.rest.default-page-size}")
     private String defaultPageSize;
 
     @Override
