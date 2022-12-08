@@ -88,6 +88,8 @@ class BoxOrderControllerTest {
         destinationNodeDto.setPhoneNumber("09123456789");
         destinationNodeDto.setAddressHomeUnit("1");
         destinationNodeDto.setAddressHouseNumber("1");
+        destinationNodeDto.setX(2.0);
+        destinationNodeDto.setY(2.0);
         List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
         destinationNodeDtoList.add(destinationNodeDto);
 
@@ -102,6 +104,8 @@ class BoxOrderControllerTest {
         order0.setSourceAddressBase("sample address base");
         order0.setSourceAddressHomeUnit("1");
         order0.setSourceAddressHouseNumber("1");
+        order0.setSourceX(1.0);
+        order0.setSourceY(1.0);
 
         given(boxOrderService.saveBoxOrder(any(BoxOrderDto.class))).willReturn(boxOrderMapper.boxOrderToBoxOrderDto(BoxOrder.builder()
                 .id(order0.getId()).build()));
@@ -142,6 +146,8 @@ class BoxOrderControllerTest {
         destinationNodeDto.setPhoneNumber("09123456789");
         destinationNodeDto.setAddressHomeUnit("1");
         destinationNodeDto.setAddressHouseNumber("1");
+        destinationNodeDto.setX(2.0);
+        destinationNodeDto.setY(2.0);
         List<DestinationNodeDto> destinationNodeDtoList = new ArrayList<>();
         destinationNodeDtoList.add(destinationNodeDto);
 
@@ -156,6 +162,8 @@ class BoxOrderControllerTest {
         order0.setSourceAddressBase("sample address base");
         order0.setSourceAddressHomeUnit("1");
         order0.setSourceAddressHouseNumber("1");
+        order0.setSourceX(1.0);
+        order0.setSourceY(1.0);
 
         given(boxOrderService.updateBoxOrder(any(BoxOrderDto.class))).willReturn(boxOrderMapper.boxOrderToBoxOrderDto(BoxOrder.builder()
                 .id(order0.getId()).build()));
