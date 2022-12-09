@@ -5,6 +5,7 @@ import com.snapp.boxdemo.model.dto.BoxOrderDto;
 import com.snapp.boxdemo.model.entity.OrderType;
 import com.snapp.boxdemo.model.search.BoxOrderSearchWrapper;
 import com.snapp.boxdemo.service.BoxOrderService;
+import io.swagger.annotations.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -24,6 +25,42 @@ public class BoxOrderController {
     private final BoxOrderService service;
     private final MessageSource source;
 
+    @ApiOperation(value = "get order by id")
+    @ApiParam(name = "orderId", value = "order id", required = true)
+    @ApiResponse(code = 200, message = "success",
+            response = BaseResponseDto.class, examples = @Example(value =
+            {@ExampleProperty(mediaType = "application/json", value = """
+                    {
+                      "message": "string",
+                      "result": {
+                        "destinations": [
+                          {
+                            "addressBase": "string",
+                            "addressHomeUnit": "string",
+                            "addressHouseNumber": "string",
+                            "comment": "string",
+                            "fullName": "string",
+                            "id": 1,
+                            "phoneNumber": "string",
+                            "priceRange": "UP_TO_FIVE",
+                            "x": 2.0,
+                            "y": 2.0
+                          }
+                        ],
+                        "id": 1,
+                        "orderType": "BIKE",
+                        "ownerId": 1,
+                        "price": 40000,
+                        "sourceAddressBase": "string",
+                        "sourceAddressHomeUnit": "string",
+                        "sourceAddressHouseNumber": "string",
+                        "sourceComment": "string",
+                        "sourceFullName": "string",
+                        "sourcePhoneNumber": "string",
+                        "sourceX": 1.0,
+                        "sourceY": 1.0
+                      }
+                    }""")}))
     @GetMapping("/{orderId}")
     public ResponseEntity<BaseResponseDto<BoxOrderDto>> getBoxOrder(@PathVariable Long orderId, Locale locale) {
         BoxOrderDto dto = service.getBoxOrder(orderId);
@@ -32,6 +69,41 @@ public class BoxOrderController {
         ).build());
     }
 
+    @ApiOperation(value = "create new order")
+    @ApiResponse(code = 200, message = "success",
+            response = BaseResponseDto.class, examples = @Example(value =
+            {@ExampleProperty(mediaType = "application/json", value = """
+                    {
+                      "message": "string",
+                      "result": {
+                        "destinations": [
+                          {
+                            "addressBase": "string",
+                            "addressHomeUnit": "string",
+                            "addressHouseNumber": "string",
+                            "comment": "string",
+                            "fullName": "string",
+                            "id": 1,
+                            "phoneNumber": "string",
+                            "priceRange": "UP_TO_FIVE",
+                            "x": 2.0,
+                            "y": 2.0
+                          }
+                        ],
+                        "id": 1,
+                        "orderType": "BIKE",
+                        "ownerId": 1,
+                        "price": 40000,
+                        "sourceAddressBase": "string",
+                        "sourceAddressHomeUnit": "string",
+                        "sourceAddressHouseNumber": "string",
+                        "sourceComment": "string",
+                        "sourceFullName": "string",
+                        "sourcePhoneNumber": "string",
+                        "sourceX": 1.0,
+                        "sourceY": 1.0
+                      }
+                    }""")}))
     @PostMapping
     public ResponseEntity<BaseResponseDto<BoxOrderDto>> postBoxOrder(@Valid @RequestBody BoxOrderDto dto, Locale locale) {
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(service.saveBoxOrder(dto)).message(
@@ -39,6 +111,41 @@ public class BoxOrderController {
         ).build());
     }
 
+    @ApiOperation(value = "update the order")
+    @ApiResponse(code = 200, message = "success",
+            response = BaseResponseDto.class, examples = @Example(value =
+            {@ExampleProperty(mediaType = "application/json", value = """
+                    {
+                      "message": "string",
+                      "result": {
+                        "destinations": [
+                          {
+                            "addressBase": "string",
+                            "addressHomeUnit": "string",
+                            "addressHouseNumber": "string",
+                            "comment": "string",
+                            "fullName": "string",
+                            "id": 1,
+                            "phoneNumber": "string",
+                            "priceRange": "UP_TO_FIVE",
+                            "x": 2.0,
+                            "y": 2.0
+                          }
+                        ],
+                        "id": 1,
+                        "orderType": "BIKE",
+                        "ownerId": 1,
+                        "price": 40000,
+                        "sourceAddressBase": "string",
+                        "sourceAddressHomeUnit": "string",
+                        "sourceAddressHouseNumber": "string",
+                        "sourceComment": "string",
+                        "sourceFullName": "string",
+                        "sourcePhoneNumber": "string",
+                        "sourceX": 1.0,
+                        "sourceY": 1.0
+                      }
+                    }""")}))
     @PutMapping
     public ResponseEntity<BaseResponseDto<BoxOrderDto>> putBoxOrder(@RequestBody @Valid BoxOrderDto dto, Locale locale) {
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(service.updateBoxOrder(dto)).message(
@@ -46,6 +153,7 @@ public class BoxOrderController {
         ).build());
     }
 
+    @ApiOperation(value = "delete the order by id")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<BaseResponseDto<Object>> deleteBoxOrder(@PathVariable Long orderId, Locale locale) {
         service.removeBoxOrder(orderId);
@@ -54,6 +162,41 @@ public class BoxOrderController {
         ).build());
     }
 
+    @ApiOperation(value = "search orders")
+    @ApiResponse(code = 200, message = "success",
+            response = BaseResponseDto.class, examples = @Example(value =
+            {@ExampleProperty(mediaType = "application/json", value = """
+                    {
+                      "message": "string",
+                      "result": {
+                        "destinations": [
+                          {
+                            "addressBase": "string",
+                            "addressHomeUnit": "string",
+                            "addressHouseNumber": "string",
+                            "comment": "string",
+                            "fullName": "string",
+                            "id": 1,
+                            "phoneNumber": "string",
+                            "priceRange": "UP_TO_FIVE",
+                            "x": 2.0,
+                            "y": 2.0
+                          }
+                        ],
+                        "id": 1,
+                        "orderType": "BIKE",
+                        "ownerId": 1,
+                        "price": 40000,
+                        "sourceAddressBase": "string",
+                        "sourceAddressHomeUnit": "string",
+                        "sourceAddressHouseNumber": "string",
+                        "sourceComment": "string",
+                        "sourceFullName": "string",
+                        "sourcePhoneNumber": "string",
+                        "sourceX": 1.0,
+                        "sourceY": 1.0
+                      }
+                    }""")}))
     @GetMapping
     public ResponseEntity<BaseResponseDto<Object>> searchBoxOrder(
             @RequestParam(required = false) String ownerFullName,
