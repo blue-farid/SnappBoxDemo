@@ -4,11 +4,9 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
-import org.springframework.http.HttpMethod;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
-import springfox.documentation.builders.ResponseBuilder;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
@@ -22,45 +20,9 @@ public class BoxDemoConfiguration {
                 .select()
                 .apis(RequestHandlerSelectors.basePackage("com.snapp.boxdemo.controller.api"))
                 .paths(PathSelectors.ant("/api/order/**"))
-                .build()
-                .useDefaultResponseMessages(false)
-                .globalResponses(
-                        HttpMethod.GET,
-                        java.util.List.of(
-                                new ResponseBuilder()
-                                        .code("200")
-                                        .description("OK")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("400")
-                                        .description("Bad Request")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("404")
-                                        .description("Not Found")
-                                        .build(),
-                                new ResponseBuilder()
-                                        .code("500")
-                                        .description("Internal Server Error")
-                                        .build()
-                        )
-                );
+                .build();
 
     }
-/*    @Primary
-    @Bean
-    public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider memorySwaggerResourcesProvider) {
-        return () -> {
-            SwaggerResource wsResource = new SwaggerResource();
-            wsResource.setName("Box Demo Application");
-            wsResource.setSwaggerVersion("3.0.0");
-            wsResource.setLocation("/swagger-config.yml");
-            List<SwaggerResource> resources = new ArrayList<>(memorySwaggerResourcesProvider.get());
-            resources.clear();
-            resources.add(wsResource);
-            return resources;
-        };
-    }*/
 
     @Bean
     public MessageSource messageSource() {
