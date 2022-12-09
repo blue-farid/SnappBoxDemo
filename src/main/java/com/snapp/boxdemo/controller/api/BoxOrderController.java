@@ -1,4 +1,4 @@
-package com.snapp.boxdemo.controller;
+package com.snapp.boxdemo.controller.api;
 
 import com.snapp.boxdemo.model.dto.BaseResponseDto;
 import com.snapp.boxdemo.model.dto.BoxOrderDto;

@@ -3,19 +3,15 @@ package com.snapp.boxdemo.config;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.http.HttpMethod;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import springfox.documentation.builders.PathSelectors;
+import springfox.documentation.builders.RequestHandlerSelectors;
+import springfox.documentation.builders.ResponseBuilder;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
-import springfox.documentation.swagger.web.InMemorySwaggerResourcesProvider;
-import springfox.documentation.swagger.web.SwaggerResource;
-import springfox.documentation.swagger.web.SwaggerResourcesProvider;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Configuration
 @EnableSwagger2
@@ -24,9 +20,34 @@ public class BoxDemoConfiguration {
     public Docket apiDoc() {
         return new Docket(DocumentationType.OAS_30)
                 .select()
-                .paths(PathSelectors.none()).build();
+                .apis(RequestHandlerSelectors.basePackage("com.snapp.boxdemo.controller.api"))
+                .paths(PathSelectors.ant("/api/order/**"))
+                .build()
+                .useDefaultResponseMessages(false)
+                .globalResponses(
+                        HttpMethod.GET,
+                        java.util.List.of(
+                                new ResponseBuilder()
+                                        .code("200")
+                                        .description("OK")
+                                        .build(),
+                                new ResponseBuilder()
+                                        .code("400")
+                                        .description("Bad Request")
+                                        .build(),
+                                new ResponseBuilder()
+                                        .code("404")
+                                        .description("Not Found")
+                                        .build(),
+                                new ResponseBuilder()
+                                        .code("500")
+                                        .description("Internal Server Error")
+                                        .build()
+                        )
+                );
+
     }
-    @Primary
+/*    @Primary
     @Bean
     public SwaggerResourcesProvider swaggerResourcesProvider(InMemorySwaggerResourcesProvider memorySwaggerResourcesProvider) {
         return () -> {
@@ -39,7 +60,7 @@ public class BoxDemoConfiguration {
             resources.add(wsResource);
             return resources;
         };
-    }
+    }*/
 
     @Bean
     public MessageSource messageSource() {
