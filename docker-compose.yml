@@ -1,10 +1,27 @@
-version: '2'
+version: '3.1'
 services:
-    box-demo:
-        image: box-demo:latest
-        ports:
-            - 8080:8080
-    snapp-price:
-        image: snapp-price:latest
-        ports:
-            - 8081:8081
+  box-demo:
+    image: box-demo:latest
+    ports:
+    - "8080:8080"
+    depends_on:
+    - db
+  snapp-price:
+    image: snapp-price:latest
+    ports:
+    - "8081:8081"
+  db:
+    hostname: db
+    image: mysql:8.0.31
+    ports:
+    - "3307:3306"
+    environment:
+    - MYSQL_ROOT_PASSWORD=password
+    - MYSQL_PASSWORD=password
+    - MYSQL_USER=box
+    - MYSQL_DATABASE=box_demo
+    volumes:
+    - db-volume:/var/lib/mysql
+
+volumes:
+  db-volume:
