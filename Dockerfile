@@ -1,6 +1,7 @@
 FROM maven:3.8.3-openjdk-17 AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
+RUN set -e
 RUN --mount=type=cache,target=/root/.m2 mvn -f /home/app/pom.xml clean package
 
 FROM openjdk:17-jdk-slim

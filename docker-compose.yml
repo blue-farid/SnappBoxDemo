@@ -2,12 +2,14 @@ version: '3.1'
 services:
   box-demo:
     image: box-demo:latest
+    build: .
     ports:
     - "8080:8080"
     depends_on:
     - db
   snapp-price:
     image: snapp-price:latest
+    build: ../SnappPrice
     ports:
     - "8081:8081"
   db:
