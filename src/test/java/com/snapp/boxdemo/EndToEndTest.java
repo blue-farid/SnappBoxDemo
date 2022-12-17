@@ -158,7 +158,7 @@ public class EndToEndTest {
     @SneakyThrows
     void givenBoxOrderObject_whenCreateBoxOrder_thenReturnSavedBoxOrder() {
         // given
-        given(pricingService.callPriceService(any(SourceNode.class), any(List.class))).willReturn(40000.0);
+        given(pricingService.callPriceService(any(SourceNode.class), any(List.class), any(OrderType.class))).willReturn(40000.0);
 
         List<DestinationNode> destinationNodes = new ArrayList<>();
         destinationNodes.add(DestinationNode.builder()
@@ -236,7 +236,7 @@ public class EndToEndTest {
     void givenBoxOrderObject_whenCreateBoxOrder_returnUpdatedBoxOrder() {
         // given
         List<DestinationNode> destinationNodes = new ArrayList<>();
-        given(pricingService.callPriceService(any(SourceNode.class), any(List.class))).willReturn(40000.0);
+        given(pricingService.callPriceService(any(SourceNode.class), any(List.class), any(OrderType.class))).willReturn(40000.0);
         destinationNodes.add(DestinationNode.builder()
                 .address(Address.builder()
                         .homeUnit("1")

@@ -62,7 +62,7 @@ public class BoxOrderServiceImpl implements BoxOrderService {
             throw new DuplicateEntityException(source.getMessage("error.duplicate", null, Locale.ENGLISH));
 
         BoxOrder order = mapper.boxOrderDtoToBoxOrder(dto);
-        order.setPrice(pricingService.callPriceService(order.getSource(), order.getDestinations()));
+        order.setPrice(pricingService.callPriceService(order.getSource(), order.getDestinations(), dto.getOrderType()));
         BoxOrder result = repository.save(order);
         return mapper.boxOrderToBoxOrderDto(result);
     }

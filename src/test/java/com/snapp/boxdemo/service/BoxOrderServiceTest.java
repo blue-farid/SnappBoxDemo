@@ -137,7 +137,7 @@ class BoxOrderServiceTest {
 
         given(boxOrderRepository.existsById(orderId)).willReturn(false);
 
-        given(pricingService.callPriceService(any(SourceNode.class), any(List.class))).willReturn(40000D);
+        given(pricingService.callPriceService(any(SourceNode.class), any(List.class), any(OrderType.class))).willReturn(40000D);
 
         BoxOrderDto order0 = new BoxOrderDto();
         order0.setId(orderId);
