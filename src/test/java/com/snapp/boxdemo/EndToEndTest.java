@@ -3,6 +3,8 @@ package com.snapp.boxdemo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.snapp.boxdemo.mapper.BoxOrderMapper;
+import com.snapp.boxdemo.model.dto.BaseResponseDto;
+import com.snapp.boxdemo.model.dto.BoxPriceResponseDto;
 import com.snapp.boxdemo.model.entity.*;
 import com.snapp.boxdemo.model.entity.node.DestinationNode;
 import com.snapp.boxdemo.model.entity.node.SourceNode;
@@ -13,11 +15,15 @@ import com.snapp.boxdemo.repository.NodeRepository;
 import com.snapp.boxdemo.service.BoxOrderService;
 import com.snapp.boxdemo.service.PricingService;
 import lombok.SneakyThrows;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
@@ -32,8 +38,6 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -64,11 +68,25 @@ public class EndToEndTest {
     @Autowired
     NodeRepository nodeRepository;
 
-    @MockBean
+    @Autowired
     PricingService pricingService;
+
+    @Value("${price.service.port}")
+    String pricingPort;
+
+    @Value("${price.service.host}")
+    String pricingHost;
+
+    @Value("${price.service.scheme}")
+    String pricingScheme;
 
     long ownerId;
 
+    ObjectWriter jsonWriter = new ObjectMapper().writer().withDefaultPrettyPrinter();
+
+    MockWebServer pricingServer;
+
+    @SneakyThrows
     @PostConstruct
     void setUp() {
         ownerId = clientRepository.save(Client.builder()
@@ -77,6 +95,27 @@ public class EndToEndTest {
                 .email("test@test.com")
                 .id(1L)
                 .build()).getId();
+    }
+
+    @BeforeEach
+    @SneakyThrows
+    void priceServerUp() {
+        pricingServer = new MockWebServer();
+        pricingServer.start(Integer.parseInt(pricingPort));
+        // mock response from pricing service
+        BoxPriceResponseDto dto = new BoxPriceResponseDto();
+        dto.setPriceAmount("40000");
+        MockResponse mockResponse = new MockResponse();
+        mockResponse.setResponseCode(200);
+        mockResponse.setBody(jsonWriter.writeValueAsString(BaseResponseDto.<BoxPriceResponseDto>builder().result(dto).message("success").build()));
+        mockResponse.addHeader("Content-Type", "application/json");
+        pricingServer.enqueue(mockResponse);
+    }
+
+    @AfterEach
+    @SneakyThrows
+    void tearDown() {
+        pricingServer.shutdown();
     }
 
     @Test
@@ -158,7 +197,6 @@ public class EndToEndTest {
     @SneakyThrows
     void givenBoxOrderObject_whenCreateBoxOrder_thenReturnSavedBoxOrder() {
         // given
-        given(pricingService.callPriceService(any(SourceNode.class), any(List.class), any(OrderType.class))).willReturn(40000.0);
 
         List<DestinationNode> destinationNodes = new ArrayList<>();
         destinationNodes.add(DestinationNode.builder()
@@ -200,8 +238,7 @@ public class EndToEndTest {
                 .path("/api/order")
                 .build();
 
-        ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(orderMapper.boxOrderToBoxOrderDto(boxOrder));
+        String json = jsonWriter.writeValueAsString(orderMapper.boxOrderToBoxOrderDto(boxOrder));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .post(uriComponents.toUriString())
@@ -236,7 +273,6 @@ public class EndToEndTest {
     void givenBoxOrderObject_whenCreateBoxOrder_returnUpdatedBoxOrder() {
         // given
         List<DestinationNode> destinationNodes = new ArrayList<>();
-        given(pricingService.callPriceService(any(SourceNode.class), any(List.class), any(OrderType.class))).willReturn(40000.0);
         destinationNodes.add(DestinationNode.builder()
                 .address(Address.builder()
                         .homeUnit("1")
@@ -281,8 +317,7 @@ public class EndToEndTest {
                 .path("/api/order")
                 .build();
 
-        ObjectWriter writer = new ObjectMapper().writer().withDefaultPrettyPrinter();
-        String json = writer.writeValueAsString(orderMapper.boxOrderToBoxOrderDto(boxOrder));
+        String json = jsonWriter.writeValueAsString(orderMapper.boxOrderToBoxOrderDto(boxOrder));
 
         RequestBuilder requestBuilder = MockMvcRequestBuilders
                 .put(uriComponents.toUriString())

@@ -6,14 +6,16 @@ services:
     ports:
     - "8080:8080"
     depends_on:
-    - db
+    - mysql-db
   snapp-price:
     image: snapp-price:latest
     build: ../SnappPrice
     ports:
     - "8081:8081"
-  db:
-    hostname: db
+    depends_on:
+    - mongo-db
+  mysql-db:
+    hostname: mysql-db
     image: mysql:8.0.31
     ports:
     - "3307:3306"
@@ -23,7 +25,12 @@ services:
     - MYSQL_USER=box
     - MYSQL_DATABASE=box_demo
     volumes:
-    - db-volume:/var/lib/mysql
+    - mysql-db-volume:/var/lib/mysql
+  mongo-db:
+    hostname: mongo-db
+    image: mongo
+    ports:
+    - "27017:27017"
 
 volumes:
-  db-volume:
+  mysql-db-volume:

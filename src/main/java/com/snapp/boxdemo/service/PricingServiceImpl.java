@@ -22,19 +22,19 @@ public class PricingServiceImpl implements PricingService {
     private final WebClient webClient;
 
     @Value("${price.service.port}")
-    private String priceServicePort;
+    private String port;
     @Value("${price.service.host}")
-    private String priceServiceHost;
+    private String host;
 
     @Value("${price.service.scheme}")
-    private String priceScheme;
+    private String scheme;
 
     @Override
     public Double callPriceService(SourceNode sourceNode, List<DestinationNode> destinationNodes, OrderType type) {
         UriComponents uriComponents = UriComponentsBuilder.newInstance()
-                .scheme(priceScheme)
-                .host(priceServiceHost)
-                .port(priceServicePort)
+                .scheme(scheme)
+                .host(host)
+                .port(port)
                 .path("/price/box")
                 .queryParam("sourceX", sourceNode.getX())
                 .queryParam("sourceY", sourceNode.getY())
