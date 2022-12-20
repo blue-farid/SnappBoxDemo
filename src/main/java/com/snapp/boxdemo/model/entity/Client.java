@@ -18,7 +18,7 @@ public class Client {
     private Long id;
     @Column(nullable = false)
     private String fullName;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phoneNumber;
     @Column
     private String email;
