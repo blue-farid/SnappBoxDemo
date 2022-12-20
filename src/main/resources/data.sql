@@ -21,4 +21,4 @@ VALUES (2, 1, 2, 'CAR', NOW(), NOW(), 40000.0);
 INSERT INTO node (id, full_name, phone_number, address_id, comment, price_range, box_order_id, dtype, x , y)
 VALUES (4, 'Neda Masjedi', '091233456789', 4, 'sample comment dest', 'UP_TO_ONE', 2, 'destination_node' , 4.0, 4.0);
 INSERT INTO client (id, full_name, phone_number, email)
-VALUES (2, 'Neda Masjedi', '09123456789', 'neda.masjedi@hotmail.com');
+VALUES (2, 'Neda Masjedi', '09123456789', 'invalid@invalid.com');

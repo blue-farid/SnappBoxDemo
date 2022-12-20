@@ -20,7 +20,7 @@ public class Client {
     private String fullName;
     @Column(nullable = false, unique = true)
     private String phoneNumber;
-    @Column
+    @Column(nullable = false, unique = true)
     private String email;
     @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
     private Set<BoxOrder> boxOrders;
