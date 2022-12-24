@@ -1,9 +1,18 @@
 package com.snapp.boxdemo.config;
 
+import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.serializer.GenericToStringSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.reactive.function.client.WebClient;
 import springfox.documentation.builders.PathSelectors;
@@ -14,11 +23,20 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+import java.security.SecureRandom;
 import java.util.Collections;
+import java.util.Properties;
 
 @Configuration
 @EnableSwagger2
 public class BoxDemoConfiguration {
+    @Value("${spring.redis.host}")
+    private String host;
+    @Value("${spring.redis.port}")
+    private Integer port;
+    @Value("${spring.redis.database}")
+    private Integer database;
+
     @Bean
     public Docket apiDoc() {
         return new Docket(DocumentationType.OAS_30)
@@ -58,5 +76,47 @@ public class BoxDemoConfiguration {
     @Bean
     public WebClient webClient() {
         return WebClient.create();
+    }
+
+    @Bean
+    public RedisTemplate<String, Long> redisTemplate(JedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Long> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        template.setKeySerializer(new StringRedisSerializer());
+        template.setValueSerializer(new StringRedisSerializer());
+        template.setHashKeySerializer(new GenericToStringSerializer<>(String.class));
+        template.setHashValueSerializer(new GenericToStringSerializer<>(String.class));
+        return template;
+    }
+
+    @Bean
+    @SneakyThrows
+    public SecureRandom secureRandom() {
+        return SecureRandom.getInstance("SHA1PRNG");
+    }
+
+    @Bean
+    public JavaMailSender getJavaMailSender() {
+        JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setHost("smtp.gmail.com");
+        mailSender.setPort(587);
+
+        mailSender.setUsername("spring.temp.mail@gmail.com");
+        mailSender.setPassword("password@spring");
+
+        Properties props = mailSender.getJavaMailProperties();
+        props.put("mail.transport.protocol", "smtp");
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.debug", "true");
+
+        return mailSender;
+    }
+
+    @Bean
+    JedisConnectionFactory jedisConnectionFactory() {
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration(host, port);
+        redisStandaloneConfiguration.setDatabase(database);
+        return new JedisConnectionFactory(redisStandaloneConfiguration);
     }
 }
