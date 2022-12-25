@@ -24,6 +24,11 @@ public class ClientServiceImpl implements ClientService {
     }
 
     @Override
+    public ClientDto getClientByMail(String mail) {
+        return  mapper.clientToClientDto(repository.findByEmail(mail));
+    }
+
+    @Override
     public ClientDto updateClient(ClientDto dto) {
         return mapper.clientToClientDto(repository.save(mapper.clientDtoToClient(dto)));
     }

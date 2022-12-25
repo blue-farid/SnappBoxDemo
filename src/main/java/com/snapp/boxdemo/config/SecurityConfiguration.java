@@ -31,11 +31,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 // Auth filter
+                .antMatcher("/api/**")
+                .authorizeRequests()
+                .anyRequest().authenticated()
+                .and()
                 .addFilterAt(this::authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                // Auth on all endpoints
-                .authorizeRequests(conf -> {
-                    conf.anyRequest().authenticated();
-                })
+                .exceptionHandling().and()
                 // Disable "JSESSIONID" cookies
                 .sessionManagement(conf -> {
                     conf.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
@@ -43,7 +44,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private void authenticationFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        Optional<Authentication> authentication = authRedisService.authenticate((HttpServletRequest) request);
+        Optional<Authentication> authentication = authRedisService.authorization((HttpServletRequest) request);
         authentication.ifPresent(SecurityContextHolder.getContext()::setAuthentication);
         chain.doFilter(request, response);
     }

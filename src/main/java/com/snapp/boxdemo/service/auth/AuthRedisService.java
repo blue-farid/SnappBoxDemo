@@ -6,5 +6,5 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface AuthRedisService {
-    Optional<Authentication> authenticate(HttpServletRequest request);
+    Optional<Authentication> authorization(HttpServletRequest request);
 }

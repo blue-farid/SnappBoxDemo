@@ -14,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.naming.AuthenticationException;
 import javax.servlet.ServletException;
 import java.util.Objects;
 
@@ -44,5 +45,11 @@ public class BoxDemoExceptionHandler {
         final StringBuilder builder = new StringBuilder();
         e.getAllErrors().forEach(error -> builder.append(Objects.requireNonNull(error.getDefaultMessage())).append(", "));
         return new ResponseEntity<>(BaseResponseDto.builder().message(builder.toString()).build(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler({SecurityException.class, AuthenticationException.class})
+    public ResponseEntity<BaseResponseDto<Object>> handleSecurityException(SecurityException e) {
+        log.error(e.getMessage(), e);
+        return new ResponseEntity<>(BaseResponseDto.builder().message(e.getMessage()).build(), HttpStatus.UNAUTHORIZED);
     }
 }

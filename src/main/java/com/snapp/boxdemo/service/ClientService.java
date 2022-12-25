@@ -8,6 +8,8 @@ public interface ClientService {
 
     void removeClient(long id);
 
+    ClientDto getClientByMail(String mail);
+
     ClientDto updateClient(ClientDto dto);
 
     ClientDto saveClient(ClientDto dto);

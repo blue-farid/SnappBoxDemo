@@ -1,6 +1,8 @@
 package com.snapp.boxdemo.service.auth;
 
+import com.snapp.boxdemo.service.ClientService;
 import lombok.RequiredArgsConstructor;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -22,15 +24,18 @@ import static java.util.stream.Collectors.toList;
 @RequiredArgsConstructor
 public class AuthRedisServiceImpl implements AuthRedisService {
 
-    private final RedisTemplate<String, Long> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
+    private final ClientService clientService;
 
     @Override
-    public Optional<Authentication> authenticate(HttpServletRequest request) {
+    public Optional<Authentication> authorization(HttpServletRequest request) {
         String authorization = request.getHeader("Authorization");
-        Long clientId = redisTemplate.opsForValue().get(authorization);
-        if (Objects.isNull(clientId)) {
-            return Optional.empty();
-        }
+        String mail = redisTemplate.opsForValue().get(authorization);
+        if (Strings.isBlank(mail))
+            throw new SecurityException("Not authorized!");
+        Long clientId = clientService.getClientByMail(mail).getId();
+        if (Objects.isNull(clientId))
+            throw new SecurityException("Not authorized!");
         return Optional.of(createAuthentication(clientId, Role.USER));
     }
 
@@ -45,7 +50,6 @@ public class AuthRedisServiceImpl implements AuthRedisService {
 
     private enum Role {
         USER,
-        ADMIN,
-        SYSTEM,
+        ADMIN
     }
 }
