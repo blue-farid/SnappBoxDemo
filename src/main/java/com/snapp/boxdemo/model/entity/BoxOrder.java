@@ -26,9 +26,10 @@ public class BoxOrder {
     @JoinColumn(name = "client_id")
     private Client owner;
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "source_node_id")
+    @JoinColumn(name = "source_node_id", referencedColumnName = "id")
     private SourceNode source;
-    @OneToMany(mappedBy = "boxOrder", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "destination_node_id", referencedColumnName = "id")
     private List<DestinationNode> destinations = new ArrayList<>();
     @Column
     @Enumerated(EnumType.STRING)

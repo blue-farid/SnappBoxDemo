@@ -16,10 +16,11 @@ import javax.persistence.*;
 @SuperBuilder
 @AllArgsConstructor
 @NoArgsConstructor
+@DiscriminatorValue("destination_node")
 public class DestinationNode extends Node {
     @Column
     @Enumerated(EnumType.STRING)
     private PriceRange priceRange;
-    @ManyToOne
+    @ManyToOne(targetEntity = BoxOrder.class)
     private BoxOrder boxOrder;
 }
