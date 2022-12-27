@@ -23,4 +23,7 @@ VALUES (3, 'Navid Masjedi', '09339018022', 3, 'sample comment', 2,'source_node',
 INSERT INTO node (id, full_name, phone_number, address_id, comment, price_range, box_order_id, dtype, x , y)
 VALUES (4, 'Neda Masjedi', '091233456789', 4, 'sample comment dest', 'UP_TO_ONE', 2, 'destination_node' , 4.0, 4.0);
 INSERT INTO client (id, full_name, phone_number, email)
-VALUES (2, 'Neda Masjedi', '09123456789', 'invalid@invalid.com');
+VALUES (2, 'Neda Masjedi', '09123456789', 'neda.masjedi@gmail.com');
+INSERT INTO CLIENT_ROLES VALUES (1,1);
+INSERT INTO CLIENT_ROLES VALUES (1,2);
+INSERT INTO CLIENT_ROLES VALUES (2,1);

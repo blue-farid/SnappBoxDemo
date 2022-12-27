@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -62,6 +63,7 @@ public class BoxOrderController {
                       }
                     }""")}))
     @GetMapping("/{orderId}")
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseResponseDto<BoxOrderDto>> getBoxOrder(@PathVariable Long orderId, Locale locale) {
         BoxOrderDto dto = service.getBoxOrder(orderId);
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(dto).message(
@@ -105,6 +107,7 @@ public class BoxOrderController {
                       }
                     }""")}))
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseResponseDto<BoxOrderDto>> postBoxOrder(@Valid @RequestBody BoxOrderDto dto, Locale locale) {
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(service.saveBoxOrder(dto)).message(
                 source.getMessage("save.success", null, locale)
@@ -147,6 +150,7 @@ public class BoxOrderController {
                       }
                     }""")}))
     @PutMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseResponseDto<BoxOrderDto>> putBoxOrder(@RequestBody @Valid BoxOrderDto dto, Locale locale) {
         return ResponseEntity.ok().body(BaseResponseDto.<BoxOrderDto>builder().result(service.updateBoxOrder(dto)).message(
                 source.getMessage("update.success", null, locale)
@@ -154,6 +158,7 @@ public class BoxOrderController {
     }
 
     @ApiOperation(value = "delete the order by id")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @DeleteMapping("/{orderId}")
     public ResponseEntity<BaseResponseDto<Object>> deleteBoxOrder(@PathVariable Long orderId, Locale locale) {
         service.removeBoxOrder(orderId);
@@ -198,6 +203,7 @@ public class BoxOrderController {
                       }
                     }""")}))
     @GetMapping
+    @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<BaseResponseDto<Object>> searchBoxOrder(
             @RequestParam(required = false) String ownerFullName,
             @RequestParam(required = false) Long ownerId,
