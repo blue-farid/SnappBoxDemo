@@ -6,6 +6,7 @@ import com.snapp.boxdemo.repository.ClientRepository;
 import com.snapp.boxdemo.security.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.util.Objects;
 
 @RestController
 @RequiredArgsConstructor
+@Profile("!test")
 public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenUtil jwtTokenUtil;

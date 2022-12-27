@@ -5,6 +5,7 @@ import com.snapp.boxdemo.security.jwt.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
 @EnableGlobalMethodSecurity(
         prePostEnabled = true
 )
+@Profile("!test")
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private final JwtTokenFilter jwtTokenFilter;
 
