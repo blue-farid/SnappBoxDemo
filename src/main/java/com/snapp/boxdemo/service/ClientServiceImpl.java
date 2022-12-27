@@ -25,7 +25,7 @@ public class ClientServiceImpl implements ClientService {
 
     @Override
     public ClientDto getClientByMail(String mail) {
-        return  mapper.clientToClientDto(repository.findByEmail(mail));
+        return mapper.clientToClientDto(repository.findByEmail(mail).orElse(null));
     }
 
     @Override
