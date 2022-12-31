@@ -31,6 +31,13 @@ services:
     image: mongo
     ports:
     - "27017:27017"
+  redis:
+    hostname: redis
+    image: redis
+    ports:
+    - "6379:6379"
+    environment:
+    - REDIS_PASSWORD=mypass
 
 volumes:
   mysql-db-volume:

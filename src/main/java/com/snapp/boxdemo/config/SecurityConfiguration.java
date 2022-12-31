@@ -18,8 +18,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import javax.servlet.http.HttpServletResponse;
-
 @EnableWebSecurity
 @Configuration
 @RequiredArgsConstructor
@@ -54,27 +52,15 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        // Set session management to stateless
         http = http.cors().and().csrf().disable();
         http = http
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and();
 
-        // Set unauthorized requests exception handler
         http = http
-                .exceptionHandling()
-                .authenticationEntryPoint(
-                        (request, response, ex) -> {
-                            response.sendError(
-                                    HttpServletResponse.SC_UNAUTHORIZED,
-                                    ex.getMessage()
-                            );
-                        }
-                )
-                .and();
+                .formLogin().failureForwardUrl("/access-denied").and();
 
-        // Set permissions on endpoints
         http.authorizeRequests()
                 .antMatchers("/api/order/**").authenticated()
                 .anyRequest().permitAll()

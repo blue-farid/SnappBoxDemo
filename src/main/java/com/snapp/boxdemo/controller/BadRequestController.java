@@ -24,4 +24,9 @@ public class BadRequestController implements ErrorController {
         return new ResponseEntity<>(BaseResponseDto.builder().message(source.getMessage("error.badApiCall", null,
                 locale)).build(), HttpStatus.BAD_REQUEST);
     }
+
+    @RequestMapping("/access-denied")
+    public ResponseEntity<BaseResponseDto<Object>> accessDenied(Locale locale) {
+        return new ResponseEntity<>(BaseResponseDto.builder().message(source.getMessage("error.unauthorized", null, locale)).build(), HttpStatus.UNAUTHORIZED);
+    }
 }

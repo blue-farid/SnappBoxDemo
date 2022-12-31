@@ -10,6 +10,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -47,8 +48,8 @@ public class BoxDemoExceptionHandler {
         return new ResponseEntity<>(BaseResponseDto.builder().message(builder.toString()).build(), HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler({SecurityException.class, AuthenticationException.class})
-    public ResponseEntity<BaseResponseDto<Object>> handleSecurityException(SecurityException e) {
+    @ExceptionHandler({SecurityException.class, AuthenticationException.class, AccessDeniedException.class})
+    public ResponseEntity<BaseResponseDto<Object>> handleSecurityException(Exception e) {
         log.error(e.getMessage(), e);
         return new ResponseEntity<>(BaseResponseDto.builder().message(e.getMessage()).build(), HttpStatus.UNAUTHORIZED);
     }
