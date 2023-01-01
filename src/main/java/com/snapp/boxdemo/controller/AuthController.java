@@ -2,7 +2,10 @@ package com.snapp.boxdemo.controller;
 
 import com.snapp.boxdemo.model.dto.BaseResponseDto;
 import com.snapp.boxdemo.model.entity.Client;
+import com.snapp.boxdemo.model.entity.RoleEntity;
 import com.snapp.boxdemo.repository.ClientRepository;
+import com.snapp.boxdemo.repository.RoleEntityRepository;
+import com.snapp.boxdemo.security.Role;
 import com.snapp.boxdemo.security.jwt.JwtTokenUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.MessageSource;
@@ -20,8 +23,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Locale;
-import java.util.Objects;
+import java.util.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,8 +38,12 @@ public class AuthController {
 
     private final ClientRepository clientRepository;
 
+    private final RoleEntityRepository roleEntityRepository;
+
     @GetMapping("/login")
     public ResponseEntity<BaseResponseDto<Object>> login(
+            @RequestParam String phoneNumber,
+            @RequestParam String fullName,
             @RequestParam String mail,
             @RequestParam String password,
             Locale locale
@@ -50,7 +56,13 @@ public class AuthController {
                                 .build()
                 );
             }
-            Client client = clientRepository.findByEmail(mail).get();
+            Optional<Client> clientOptional = clientRepository.findByEmail(mail);
+            Client client;
+            if (clientOptional.isEmpty())
+                client = signup(mail, fullName, phoneNumber);
+            else
+                client = clientOptional.get();
+
             client.setOneTimePassword(password);
             clientRepository.save(client);
             Authentication authenticate = authenticationManager
@@ -74,5 +86,16 @@ public class AuthController {
         } catch (BadCredentialsException ex) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+    }
+
+    private Client signup(String mail, String fullName, String phoneNumber) {
+        Client client = new Client();
+        client.setEmail(mail);
+        client.setFullName(fullName);
+        client.setPhoneNumber(phoneNumber);
+        Set<RoleEntity> roleEntities = new HashSet<>();
+        roleEntities.add(roleEntityRepository.findByName(Role.ROLE_USER));
+        client.setRoles(roleEntities);
+        return clientRepository.save(client);
     }
 }

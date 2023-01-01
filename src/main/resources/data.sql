@@ -1,5 +1,5 @@
-INSERT INTO role_entity (id, name) VALUES (1, 'USER');
-INSERT INTO role_entity (id, name) VALUES (2, 'ADMIN');
+INSERT INTO role_entity (id, name) VALUES (1, 'ROLE_USER');
+INSERT INTO role_entity (id, name) VALUES (2, 'ROLE_ADMIN');
 INSERT INTO client (id, full_name, phone_number, email)
 VALUES (1, 'Farid Masjedi', '09339018022', 'blue_farid@hotmail.com');
 INSERT INTO address (id, base, house_number, home_unit)
