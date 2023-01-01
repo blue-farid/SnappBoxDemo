@@ -1,5 +1,6 @@
 package com.snapp.boxdemo.security.jwt;
 
+import com.snapp.boxdemo.mapper.ClientMapper;
 import com.snapp.boxdemo.repository.ClientRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.logging.log4j.util.Strings;
@@ -25,6 +26,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 
     private final ClientRepository clientRepository;
 
+    private final ClientMapper clientMapper = ClientMapper.INSTANCE;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String token = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -33,12 +36,9 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Get jwt token and validate
-//        final String token = header.split(" ")[1].trim();
-        // Get user identity and set it on the spring security context
-        UserDetails userDetails = clientRepository
+        UserDetails userDetails = clientMapper.clientToClientUserDetails(clientRepository
                 .findByEmail(jwtTokenUtil.getUsernameFromToken(token))
-                .orElse(null);
+                .orElse(null));
 
         if (!jwtTokenUtil.validateToken(token, userDetails)) {
             chain.doFilter(request, response);

@@ -1,5 +1,6 @@
 package com.snapp.boxdemo.config;
 
+import com.snapp.boxdemo.mapper.ClientMapper;
 import com.snapp.boxdemo.repository.ClientRepository;
 import com.snapp.boxdemo.security.jwt.JwtTokenFilter;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +31,17 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final ClientRepository clientRepository;
 
+    private final ClientMapper clientMapper = ClientMapper.INSTANCE;
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(email -> clientRepository
+        auth.userDetailsService(email -> clientMapper.clientToClientUserDetails(clientRepository
                 .findByEmail(email)
                 .orElseThrow(
                         () -> new UsernameNotFoundException(
                                 String.format("Client: %s, not found", email)
                         )
-                ));
+                )));
     }
 
     @Override
