@@ -16,7 +16,7 @@ public interface ClientMapper {
     Client clientDtoToClient(ClientDto dto);
 
     @Mapping(target = "authorities", source = "roles")
-    @Mapping(target = "username", source = "email")
+    @Mapping(target = "username", source = "id")
     @Mapping(target = "password", source = "oneTimePassword")
     @Mapping(target = "accountNonExpired", constant = "true")
     @Mapping(target = "accountNonLocked", constant = "true")

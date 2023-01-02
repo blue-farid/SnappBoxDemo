@@ -37,7 +37,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
         }
 
         UserDetails userDetails = clientMapper.clientToClientUserDetails(clientRepository
-                .findByEmail(jwtTokenUtil.getUsernameFromToken(token))
+                .findById(Long.valueOf(jwtTokenUtil.getUsernameFromToken(token)))
                 .orElse(null));
 
         if (!jwtTokenUtil.validateToken(token, userDetails)) {

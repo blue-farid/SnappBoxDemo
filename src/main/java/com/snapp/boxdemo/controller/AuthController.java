@@ -68,12 +68,12 @@ public class AuthController {
             Authentication authenticate = authenticationManager
                     .authenticate(
                             new UsernamePasswordAuthenticationToken(
-                                    mail, password
+                                    client.getId(), password
                             )
 
                     );
 
-            User user = new User(mail, password, authenticate.getAuthorities());
+            User user = new User(client.getId().toString(), password, authenticate.getAuthorities());
 
             return ResponseEntity.ok()
                     .header(

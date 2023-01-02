@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @RequiredArgsConstructor
 @EnableGlobalMethodSecurity(
-        prePostEnabled = true
+        securedEnabled = true
 )
 @Profile("!test")
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
@@ -35,11 +35,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(email -> clientMapper.clientToClientUserDetails(clientRepository
-                .findByEmail(email)
+        auth.userDetailsService(id -> clientMapper.clientToClientUserDetails(clientRepository
+                .findById(Long.valueOf(id))
                 .orElseThrow(
                         () -> new UsernameNotFoundException(
-                                String.format("Client: %s, not found", email)
+                                String.format("Client: %s, not found", id)
                         )
                 )));
     }
