@@ -1,41 +1,38 @@
 package com.snapp.boxdemo.controller;
 
-import com.snapp.boxdemo.repository.ClientRepository;
+import com.snapp.boxdemo.model.dto.BaseResponseDto;
+import com.snapp.boxdemo.security.util.SecurityUtils;
 import com.snapp.boxdemo.service.MailSenderService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.context.MessageSource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.security.SecureRandom;
+import java.util.Locale;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/mail")
-@Slf4j
 public class MailController {
 
     @Value("${mail.otp.subject}")
     private String subject;
 
-    private MailSenderService mailSenderService;
+    private final MailSenderService mailSenderService;
 
-    private final SecureRandom secureRandom;
+    private final SecurityUtils securityUtils;
 
-
-    private final ClientRepository clientRepository;
-
-    private final RedisTemplate<String, String> redisTemplate;
+    private final MessageSource source;
 
     @GetMapping("/otp")
-    public void sendOtp(@RequestParam String to) {
-        String otp = String.valueOf(secureRandom.nextInt(999999));
-        redisTemplate.opsForValue().set(to, otp);
-//        mailSenderService.sendMail(to, subject, otp);
-        log.info("otp: {}", otp);
+    public ResponseEntity<BaseResponseDto<Object>> sendOtp(@RequestParam String to, Locale locale) {
+        String otp = securityUtils.generateOtp(to);
+        mailSenderService.sendMail(to, subject, otp);
+        return ResponseEntity.ok().body(BaseResponseDto.<Object>builder().result(null).message(
+                source.getMessage("mail.otp.success", null, locale)).build());
     }
 }

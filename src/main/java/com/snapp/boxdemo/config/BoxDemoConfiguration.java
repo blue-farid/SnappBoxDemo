@@ -37,6 +37,21 @@ public class BoxDemoConfiguration {
     @Value("${spring.redis.database}")
     private Integer database;
 
+    @Value("${spring.mail.host}")
+    private String mailHost;
+    @Value("${spring.mail.port}")
+    private Integer mailPort;
+    @Value("${spring.mail.username}")
+    private String mailUsername;
+    @Value("${spring.mail.password}")
+    private String mailPassword;
+    @Value("${spring.mail.properties.mail.smtp.auth}")
+    private String mailAuth;
+    @Value("${spring.mail.properties.mail.smtp.starttls.enable}")
+    private String mailStartTlsEnable;
+    @Value("${spring.mail.protocol}")
+    private String mailProtocol;
+
     @Bean
     public Docket apiDoc() {
         return new Docket(DocumentationType.OAS_30)
@@ -98,17 +113,16 @@ public class BoxDemoConfiguration {
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setHost("smtp.gmail.com");
-        mailSender.setPort(587);
+        mailSender.setHost(mailHost);
+        mailSender.setPort(mailPort);
 
-        mailSender.setUsername("spring.temp.mail@gmail.com");
-        mailSender.setPassword("password@spring");
+        mailSender.setUsername(mailUsername);
+        mailSender.setPassword(mailPassword);
 
         Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", "smtp");
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.debug", "true");
+        props.put("mail.transport.protocol", mailProtocol);
+        props.put("mail.smtp.auth", mailAuth);
+        props.put("mail.smtp.starttls.enable", mailStartTlsEnable);
 
         return mailSender;
     }
