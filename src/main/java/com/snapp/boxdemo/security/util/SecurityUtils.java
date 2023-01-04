@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.MessageSource;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Component;
 import java.security.SecureRandom;
 import java.util.Collection;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Component
@@ -40,12 +38,13 @@ public class SecurityUtils {
         return false;
     }
 
-    public void checkOwner(Long ownerId, Locale locale) {
+    public long checkOwner(Long ownerId, Locale locale) {
         ClientUserDetails principal = (ClientUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (!hasRole(principal.getAuthorities(), Role.ROLE_ADMIN) && !Objects.isNull(ownerId) &&
-                !principal.getUsername().equals(ownerId.toString())) {
-            throw new AccessDeniedException(source.getMessage("access.denied.ownerId", null, locale));
-            // or ownerId = principal.getUsername()
+        Long userId = Long.valueOf(principal.getUsername());
+        if (!hasRole(principal.getAuthorities(), Role.ROLE_ADMIN)) {
+            return userId;
+        } else {
+            return ownerId;
         }
     }
 
